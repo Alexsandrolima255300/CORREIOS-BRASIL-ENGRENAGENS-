@@ -28,6 +28,7 @@ input,select,textarea{width:100%;padding:13px 14px;border-radius:7px;border:1px 
 footer{border-top:1px solid #26344a;padding:25px 6%;color:#8d98a9;font-size:.82rem;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
 @media(max-width:800px){.layout{grid-template-columns:1fr}.hero{padding-top:55px}nav{gap:12px}nav a{font-size:.78rem}}
 @media(max-width:520px){header{align-items:flex-start;flex-direction:column}nav{width:100%;justify-content:space-between}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:19px}main{padding:42px 5%}}
+.ecommerce-banner{padding:10px 5% 55px;display:flex;justify-content:center;align-items:center;background:var(--black)}.ecommerce-banner img{display:block;width:100%;max-width:560px;height:auto;object-fit:contain;border-radius:10px}
 </style>
 </head>
 <body>
@@ -45,6 +46,9 @@ footer{border-top:1px solid #26344a;padding:25px 6%;color:#8d98a9;font-size:.82r
 <div class="field"><label for="telefone">Telefone / WhatsApp</label><input id="telefone" name="telefone" type="tel" placeholder="(00) 00000-0000" required></div>
 </div><button class="submit" type="submit">Enviar solicitação</button><p class="notice">Ambiente em fase inicial: o envio e o cálculo automático ainda serão ativados. Nenhum frete é calculado nesta versão de demonstração.</p></form></section>
 <aside class="panel side" id="como-funciona"><span class="tag">SIMPLES E OBJETIVO</span><h3>Como funciona</h3><div class="step"><div class="num">1</div><div><strong>Informe os dados</strong><p>Informe o CEP de destino, o valor da nota fiscal e o peso total.</p></div></div><div class="step"><div class="num">2</div><div><strong>Análise da solicitação</strong><p>A equipe analisa os dados informados para preparar a cotação.</p></div></div><div class="step"><div class="num">3</div><div><strong>Retorno da cotação</strong><p>Você recebe o retorno conforme as condições de transporte disponíveis.</p></div></div><hr style="border:0;border-top:1px solid #293b55;margin:25px 0"><p style="color:#b8c1d0;font-size:.88rem">Esta página é uma demonstração inicial da experiência de cotação da Brasil Engrenagens. As tarifas, regras comerciais e integrações ainda não estão configuradas.</p></aside></div></main>
+<section class="ecommerce-banner" aria-label="Soluções para e-commerce">
+  <img src="/solucoes-para-e-commerce-mobile.png" alt="Soluções para e-commerce" loading="lazy">
+</section>
 <footer><strong>BRASIL ENGRENAGENS</strong><span>Projeto demonstrativo • Cotação de frete</span></footer>
 <script>
 document.getElementById('quoteForm').addEventListener('submit',function(e){e.preventDefault();alert('Obrigado! Esta é uma versão de demonstração. O envio de solicitações será ativado quando configurarmos a integração.');});
