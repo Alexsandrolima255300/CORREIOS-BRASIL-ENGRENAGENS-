@@ -16,7 +16,7 @@ h1{font-size:clamp(2.5rem,6vw,5rem);line-height:1.02;max-width:780px;margin:18px
 .hero p{max-width:610px;color:#c2cad7;font-size:1.08rem}
 .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-block;padding:14px 22px;border-radius:7px;text-decoration:none;font-weight:900}.primary{background:var(--yellow);color:#080a0f}.secondary{border:1px solid #42618d;color:#fff}
 main{padding:58px 6%;max-width:1250px;margin:auto}.section-head{margin-bottom:25px}.section-head h2{font-size:2rem;margin:4px 0}.section-head p{color:var(--muted);margin:0}
-.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:25px;align-items:start}
+.layout{display:grid;grid-template-columns:1fr;gap:25px;align-items:start}
 .panel{background:#111722;border:1px solid #24344d;border-radius:14px;padding:27px;box-shadow:0 20px 50px #0005}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:.82rem;font-weight:800;color:#e8edf5}
 .origin-fixed{padding:13px 14px;border:1px solid #34445d;border-radius:7px;background:#0d1b30;display:flex;flex-direction:column;gap:3px}.origin-fixed strong{color:#f5c400}.origin-fixed span{font-size:.78rem;color:#aab2c0}
@@ -32,8 +32,8 @@ footer{border-top:1px solid #26344a;padding:25px 6%;color:#8d98a9;font-size:.82r
 </style>
 </head>
 <body>
-<header><div class="brand">BRASIL ENGRENAGENS<span>LOGÍSTICA • COTAÇÃO DE FRETE</span></div><nav><a href="#cotacao">Solicitar cotação</a><a href="#como-funciona">Como funciona</a></nav></header>
-<section class="hero"><div class="eyebrow">Soluções em transporte</div><h1>Seu frete, com mais <em>clareza.</em></h1><p>Envie os dados da sua carga e solicite uma cotação à equipe da Brasil Engrenagens. Um processo simples, direto e transparente.</p><div class="actions"><a class="btn primary" href="#cotacao">Solicitar cotação</a><a class="btn secondary" href="#como-funciona">Conheça o processo</a></div></section>
+<header><div class="brand">BRASIL ENGRENAGENS<span>LOGÍSTICA • COTAÇÃO DE FRETE</span></div><nav><a href="#cotacao">Solicitar cotação</a></nav></header>
+<section class="hero"><div class="eyebrow">Soluções em transporte</div><h1>Seu frete, com mais <em>clareza.</em></h1><p>Envie os dados da sua carga e solicite uma cotação à equipe da Brasil Engrenagens. Um processo simples, direto e transparente.</p><div class="actions"><a class="btn primary" href="#cotacao">Solicitar cotação</a></div></section>
 <main id="cotacao"><div class="section-head"><span class="tag">FORMULÁRIO DE SOLICITAÇÃO</span><h2>Dados para cotação</h2><p>Informe apenas o destino, o valor da nota fiscal e o peso total da carga.</p></div>
 <div class="layout"><section class="panel"><form id="quoteForm"><div class="form-grid">
 <div class="field full"><label>Origem do transporte</label><div class="origin-fixed"><strong>Centro de Distribuição Brasil Engrenagens</strong><span>Endereço de origem já definido pela empresa — não precisa preencher.</span></div></div>
@@ -45,7 +45,7 @@ footer{border-top:1px solid #26344a;padding:25px 6%;color:#8d98a9;font-size:.82r
 <div class="field"><label for="email">E-mail</label><input id="email" name="email" type="email" placeholder="voce@empresa.com" required></div>
 <div class="field"><label for="telefone">Telefone / WhatsApp</label><input id="telefone" name="telefone" type="tel" placeholder="(00) 00000-0000" required></div>
 </div><button class="submit" type="submit">Enviar solicitação</button><p class="notice">Ambiente em fase inicial: o envio e o cálculo automático ainda serão ativados. Nenhum frete é calculado nesta versão de demonstração.</p></form></section>
-<aside class="panel side" id="como-funciona"><span class="tag">SIMPLES E OBJETIVO</span><h3>Como funciona</h3><div class="step"><div class="num">1</div><div><strong>Informe os dados</strong><p>Informe o CEP de destino, o valor da nota fiscal e o peso total.</p></div></div><div class="step"><div class="num">2</div><div><strong>Análise da solicitação</strong><p>A equipe analisa os dados informados para preparar a cotação.</p></div></div><div class="step"><div class="num">3</div><div><strong>Retorno da cotação</strong><p>Você recebe o retorno conforme as condições de transporte disponíveis.</p></div></div><hr style="border:0;border-top:1px solid #293b55;margin:25px 0"><p style="color:#b8c1d0;font-size:.88rem">Esta página é uma demonstração inicial da experiência de cotação da Brasil Engrenagens. As tarifas, regras comerciais e integrações ainda não estão configuradas.</p></aside></div></main>
+</div></main>
 <section class="ecommerce-banner" aria-label="Soluções para e-commerce">
   <img src="/solucoes-para-e-commerce-mobile.png" alt="Soluções para e-commerce" loading="lazy">
 </section>
