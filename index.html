@@ -19,6 +19,7 @@ main{padding:58px 6%;max-width:1250px;margin:auto}.section-head{margin-bottom:25
 .layout{display:grid;grid-template-columns:1.2fr .8fr;gap:25px;align-items:start}
 .panel{background:#111722;border:1px solid #24344d;border-radius:14px;padding:27px;box-shadow:0 20px 50px #0005}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:.82rem;font-weight:800;color:#e8edf5}
+.origin-fixed{padding:13px 14px;border:1px solid #34445d;border-radius:7px;background:#0d1b30;display:flex;flex-direction:column;gap:3px}.origin-fixed strong{color:#f5c400}.origin-fixed span{font-size:.78rem;color:#aab2c0}
 input,select,textarea{width:100%;padding:13px 14px;border-radius:7px;border:1px solid #34445d;background:#090e17;color:#fff;font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--yellow)}
 .submit{border:0;cursor:pointer;width:100%;margin-top:20px;font:inherit;font-weight:900;background:var(--yellow);color:#080a0f;padding:15px;border-radius:7px}
 .notice{font-size:.8rem;color:#aab2c0;margin-top:12px}
@@ -34,7 +35,7 @@ footer{border-top:1px solid #26344a;padding:25px 6%;color:#8d98a9;font-size:.82r
 <section class="hero"><div class="eyebrow">Soluções em transporte</div><h1>Seu frete, com mais <em>clareza.</em></h1><p>Envie os dados da sua carga e solicite uma cotação à equipe da Brasil Engrenagens. Um processo simples, direto e transparente.</p><div class="actions"><a class="btn primary" href="#cotacao">Solicitar cotação</a><a class="btn secondary" href="#como-funciona">Conheça o processo</a></div></section>
 <main id="cotacao"><div class="section-head"><span class="tag">FORMULÁRIO DE SOLICITAÇÃO</span><h2>Dados para cotação</h2><p>Preencha as informações da mercadoria e do transporte.</p></div>
 <div class="layout"><section class="panel"><form id="quoteForm"><div class="form-grid">
-<div class="field"><label for="origem">CEP de origem</label><input id="origem" name="origem" inputmode="numeric" placeholder="00000-000" required></div>
+<div class="field full"><label>Origem do transporte</label><div class="origin-fixed"><strong>Centro de Distribuição Brasil Engrenagens</strong><span>Endereço de origem já definido pela empresa — não precisa preencher.</span></div></div>
 <div class="field"><label for="destino">CEP de destino</label><input id="destino" name="destino" inputmode="numeric" placeholder="00000-000" required></div>
 <div class="field"><label for="valor">Valor da nota fiscal (R$)</label><input id="valor" name="valor" inputmode="decimal" placeholder="0,00" required></div>
 <div class="field"><label for="peso">Peso total (kg)</label><input id="peso" name="peso" type="number" min="0.01" step="0.01" placeholder="Ex.: 25" required></div>
