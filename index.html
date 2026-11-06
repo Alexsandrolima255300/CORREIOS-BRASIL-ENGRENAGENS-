@@ -98,12 +98,12 @@ const cepDestino=document.getElementById('destino');
 const cidadeDestino=document.getElementById('cidadeDestino');
 let ultimoCepConsultado='';
 cepDestino.addEventListener('input',()=>{
-  const digits=cepDestino.value.replace(/\\D/g,'').slice(0,8);
+  const digits=cepDestino.value.replace(/\D/g,'').slice(0,8);
   cepDestino.value=digits.length>5?digits.slice(0,5)+'-'+digits.slice(5):digits;
   if(digits.length!==8){cidadeDestino.value='';ultimoCepConsultado='';}
 });
 async function consultarCidadePorCep(){
-  const cep=cepDestino.value.replace(/\\D/g,'');
+  const cep=cepDestino.value.replace(/\D/g,'');
   if(cep.length!==8||cep===ultimoCepConsultado)return;
   ultimoCepConsultado=cep;
   cidadeDestino.value='Consultando CEP...';
