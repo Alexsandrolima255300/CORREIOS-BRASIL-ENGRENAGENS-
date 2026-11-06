@@ -8,7 +8,7 @@
 :root{--yellow:#f5c400;--black:#090b10;--blue:#102b55;--white:#f7f8fb;--muted:#aab2c0}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 /* Tela inicial de carregamento */
-#siteLoader{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:25px;background:radial-gradient(ellipse at center,#142b4c 0%,#090b10 68%);opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
+#siteLoader{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:25px;background:#000;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
 #siteLoader.loader-hidden{opacity:0;visibility:hidden;pointer-events:none}
 #siteLoader img{display:block;width:min(72vw,320px);max-height:150px;object-fit:contain;animation:loaderPulse 1.8s ease-in-out infinite}
 .loader-track{width:130px;height:4px;border-radius:10px;background:#26364d;overflow:hidden}
