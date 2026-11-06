@@ -35,6 +35,12 @@ main{padding:58px 6%;max-width:1250px;margin:auto}.section-head{margin-bottom:25
 input,select,textarea{width:100%;padding:13px 14px;border-radius:7px;border:1px solid #34445d;background:#090e17;color:#fff;font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--yellow)}
 .submit{border:0;cursor:pointer;width:100%;margin-top:20px;font:inherit;font-weight:900;background:var(--yellow);color:#080a0f;padding:15px;border-radius:7px}
 .notice{font-size:.8rem;color:#aab2c0;margin-top:12px}
+.quote-result{display:none;margin-top:20px;padding:18px;border:1px solid #456184;border-radius:10px;background:#0c1a2c}
+.quote-result.show{display:block}.quote-result h3{margin:0 0 8px;color:var(--yellow);font-size:1.15rem}
+.quote-price{font-size:clamp(1.8rem,5vw,2.5rem);font-weight:900;color:#fff;margin:5px 0}
+.quote-detail{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #26364d;font-size:.88rem}
+.quote-detail:last-of-type{border-bottom:0}.quote-warning{margin:12px 0 0;color:#f5c400;font-size:.78rem;line-height:1.45}
+.quote-error{color:#ffb4ab}.table-status{font-size:.78rem;color:#aab2c0;margin:8px 0 0}
 .side h3{font-size:1.25rem;margin-top:0}.step{display:flex;gap:14px;margin:22px 0}.num{width:34px;height:34px;flex:none;border-radius:9px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900}.step p{margin:3px 0;color:#b8c1d0;font-size:.9rem}.step strong{color:#fff}
 .tag{display:inline-block;background:#152a49;color:#a9c8f5;padding:6px 10px;border-radius:5px;font-size:.72rem;font-weight:800}
 footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-size:.82rem;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}footer img{display:block;width:auto;max-width:min(48%,220px);max-height:58px;object-fit:contain}
@@ -88,7 +94,7 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 <div class="field"><label for="cidadeDestino">Cidade de destino</label><input id="cidadeDestino" name="cidadeDestino" type="text" placeholder="A cidade aparecerá após informar o CEP" readonly aria-live="polite"></div>
 <div class="field"><label for="valor">Valor da nota fiscal (R$)</label><input id="valor" name="valor" inputmode="decimal" placeholder="0,00" required></div>
 <div class="field"><label for="peso">Peso total (kg)</label><input id="peso" name="peso" type="number" min="0" max="15" step="0.01" placeholder="Ex.: 10" title="Informe um peso entre 0 e 15 kg" required><small class="field-hint">Obs.: O peso permitido para cotação é de 0 a 15 kg.</small></div>
-</div><button class="submit" type="submit">Enviar solicitação</button><p class="notice">Ambiente em fase inicial: o envio e o cálculo automático ainda serão ativados. Nenhum frete é calculado nesta versão de demonstração.</p></form></section>
+</div><button class="submit" type="submit">Calcular frete estimado</button><p class="notice">Tarifa estimada pela tabela SEDEX Platinum com origem em Uberaba-MG. O valor da nota fiscal é solicitado para identificação, mas não altera esta tarifa da planilha.</p><p class="table-status" id="tableStatus" role="status">Carregando tabela de tarifas...</p><section class="quote-result" id="quoteResult" aria-live="polite"></section></form></section>
 </div></main>
 <section class="ecommerce-banner" aria-label="Soluções para e-commerce">
   <picture><source media="(min-width: 801px)" srcset="/solucoes-para-e-commerce-desktop.png"><img src="/solucoes-para-e-commerce-mobile.png" alt="Soluções para e-commerce" loading="lazy"></picture>
@@ -122,7 +128,7 @@ Como posso ajudar você hoje?</div></div>
 })();
 </script>
 <script>
-document.getElementById('quoteForm').addEventListener('submit',function(e){e.preventDefault();alert('Obrigado! Esta é uma versão de demonstração. O envio de solicitações será ativado quando configurarmos a integração.');});
+// O formulário agora calcula a tarifa localmente usando a tabela CSV do repositório.
 
 // Consulta automática do CEP e preenchimento da cidade/UF via ViaCEP.
 const cepDestino=document.getElementById('destino');
@@ -150,6 +156,113 @@ async function consultarCidadePorCep(){
   }
 }
 cepDestino.addEventListener('blur',consultarCidadePorCep);
+
+// Motor de cotação SEDEX Platinum: consulta a tabela publicada junto ao site.
+const quoteForm=document.getElementById('quoteForm');
+const quoteResult=document.getElementById('quoteResult');
+const tableStatus=document.getElementById('tableStatus');
+const csvPath='./ORIGEM%20UBERABA-MG%20-%20PLATINUM%20-%20SEDEX%20(1).csv';
+const weightBands=['0 a 300','301 a 500','501 a 1.000','1.001 a 2.000','2.001 a 3.000','3.001 a 4.000','4.001 a 5.000','5.001 a 6.000','6.001 a 7.000','7.001 a 8.000','8.001 a 9.000','9.001 a 10.000'];
+let tariffRows=[];
+let tariffLoadError='';
+function parseSemicolonCSVLine(line){
+ const fields=[];let value='',quoted=false;
+ for(let i=0;i<line.length;i++){
+  const ch=line[i];
+  if(ch==='"'){
+   if(quoted&&line[i+1]==='"'){value+='"';i++;}
+   else quoted=!quoted;
+  }else if(ch===';'&&!quoted){fields.push(value);value='';}
+  else value+=ch;
+ }
+ fields.push(value);return fields;
+}
+function moneyNumber(value){return Number(String(value||'').trim().replace(/\./g,'').replace(',','.'));}
+function cepNumber(value){return Number(String(value||'').replace(/\D/g,''));}
+function formatBRL(value){return value.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+async function loadTariffTable(){
+ try{
+  const response=await fetch(csvPath,{cache:'no-store'});
+  if(!response.ok)throw new Error('Não foi possível carregar o arquivo de tarifas.');
+  const csv=await response.text();
+  const lines=csv.replace(/^\uFEFF/,'').split(/\r?\n/).filter(line=>line.trim());
+  if(lines.length<2)throw new Error('A tabela de tarifas está vazia.');
+  const headers=parseSemicolonCSVLine(lines[0]);
+  const required=['Nivel','Localidade','UF','CEP Inicial','CEP Final',...weightBands,'Kg adicional'];
+  const positions=Object.fromEntries(required.map(name=>[name,headers.indexOf(name)]));
+  if(required.some(name=>positions[name]<0))throw new Error('O formato da tabela de tarifas não corresponde ao esperado.');
+  tariffRows=lines.slice(1).map(line=>{
+   const cells=parseSemicolonCSVLine(line);
+   return {level:cells[positions.Nivel],city:cells[positions.Localidade],uf:cells[positions.UF],
+    cepStart:cepNumber(cells[positions['CEP Inicial']]),cepEnd:cepNumber(cells[positions['CEP Final']]),
+    rates:weightBands.map(name=>moneyNumber(cells[positions[name]])),
+    extraKg:moneyNumber(cells[positions['Kg adicional']])};
+  }).filter(row=>row.cepStart&&row.cepEnd&&row.cepEnd>=row.cepStart&&row.rates.every(Number.isFinite)&&Number.isFinite(row.extraKg));
+  if(!tariffRows.length)throw new Error('Nenhuma faixa de CEP válida foi encontrada.');
+  tableStatus.textContent='Tabela SEDEX Platinum carregada: '+tariffRows.length.toLocaleString('pt-BR')+' localidades/faixas.';
+ }catch(error){
+  tariffLoadError=error.message||'Erro ao carregar a tabela.';
+  tableStatus.textContent='Não foi possível carregar a tabela de tarifas. Atualize a página ou tente novamente.';
+  tableStatus.classList.add('quote-error');
+ }
+}
+const tariffReady=loadTariffTable();
+function showQuoteError(message){
+ quoteResult.className='quote-result show quote-error';
+ quoteResult.innerHTML='<h3>Não foi possível calcular</h3><p></p>';
+ quoteResult.querySelector('p').textContent=message;
+}
+function findTariffByCep(cep){
+ const number=cepNumber(cep);
+ return tariffRows.find(row=>number>=row.cepStart&&number<=row.cepEnd)||null;
+}
+quoteForm.addEventListener('submit',async event=>{
+ event.preventDefault();
+ quoteResult.className='quote-result';
+ quoteResult.textContent='';
+ await tariffReady;
+ if(tariffLoadError){showQuoteError('A tabela de tarifas não está disponível. '+tariffLoadError);return;}
+ const cep=cepDestino.value.replace(/\D/g,'');
+ const weight=Number(document.getElementById('peso').value);
+ const invoice=moneyNumber(document.getElementById('valor').value);
+ if(cep.length!==8){showQuoteError('Informe um CEP de destino válido com 8 dígitos.');cepDestino.focus();return;}
+ if(!Number.isFinite(invoice)||invoice<=0){showQuoteError('Informe um valor de nota fiscal válido.');document.getElementById('valor').focus();return;}
+ if(!Number.isFinite(weight)||weight<=0||weight>15){showQuoteError('O peso deve ser maior que zero e não pode ultrapassar 15 kg.');document.getElementById('peso').focus();return;}
+ if(!cidadeDestino.value||cidadeDestino.value.includes('Consultando')||cidadeDestino.value.includes('Não foi possível')){
+  await consultarCidadePorCep();
+ }
+ const row=findTariffByCep(cep);
+ if(!row){showQuoteError('Este CEP não está contemplado na tabela SEDEX Platinum. Não aplicamos tarifa aproximada.');return;}
+ const grams=weight*1000;
+ let base=0,extra=0,bandLabel='';
+ if(grams<=10000){
+  const bandIndex=weightBands.findIndex((name,index)=>{
+   const limits=[300,500,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000];
+   return grams<=limits[index];
+  });
+  if(bandIndex<0){showQuoteError('Não foi possível identificar a faixa de peso.');return;}
+  base=row.rates[bandIndex];bandLabel=weightBands[bandIndex]+' g';
+ }else{
+  base=row.rates[11];
+  extra=(weight-10)*row.extraKg;
+  bandLabel='9.001 a 10.000 g + excedente';
+ }
+ const total=Math.round((base+extra)*100)/100;
+ quoteResult.className='quote-result show';
+ quoteResult.innerHTML='<h3>Frete estimado</h3><div class="quote-price"></div><div class="quote-detail"><span>Destino</span><strong class="destination"></strong></div><div class="quote-detail"><span>Faixa tarifária</span><strong class="level"></strong></div><div class="quote-detail"><span>Peso informado</span><strong class="weight"></strong></div><div class="quote-detail"><span>Faixa aplicada</span><strong class="band"></strong></div><div class="quote-detail"><span>Tarifa-base</span><strong class="base"></strong></div><div class="quote-detail extra-row"><span>Adicional de peso</span><strong class="extra"></strong></div><p class="quote-warning"></p>';
+ quoteResult.querySelector('.quote-price').textContent=formatBRL(total);
+ quoteResult.querySelector('.destination').textContent=(cidadeDestino.value&&!cidadeDestino.value.includes('CEP não'))?cidadeDestino.value:(row.city+' - '+row.uf);
+ quoteResult.querySelector('.level').textContent=row.level+' • SEDEX Platinum';
+ quoteResult.querySelector('.weight').textContent=weight.toLocaleString('pt-BR')+' kg';
+ quoteResult.querySelector('.band').textContent=bandLabel;
+ quoteResult.querySelector('.base').textContent=formatBRL(base);
+ quoteResult.querySelector('.extra').textContent=formatBRL(extra);
+ quoteResult.querySelector('.extra-row').style.display=extra>0?'flex':'none';
+ quoteResult.querySelector('.quote-warning').textContent=weight>10
+  ?'Para pesos acima de 10 kg, o adicional foi calculado proporcionalmente por kg (fração de kg não arredondada). Confirme essa regra comercial antes de utilizar o valor como proposta final. O cálculo considera somente as tarifas desta planilha.'
+  :'Estimativa baseada somente na tarifa da planilha. Não inclui serviços adicionais, seguro, impostos ou outros componentes que não estejam informados neste arquivo.';
+});
+
 
 
 const belaLauncher=document.getElementById('belaLauncher');
