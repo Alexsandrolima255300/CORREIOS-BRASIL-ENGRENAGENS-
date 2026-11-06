@@ -29,7 +29,8 @@ h1{font-size:clamp(2.5rem,6vw,5rem);line-height:1.02;max-width:780px;margin:18px
 main{padding:58px 6%;max-width:1250px;margin:auto}.section-head{margin-bottom:25px}.section-head h2{font-size:2rem;margin:4px 0}.section-head p{color:var(--muted);margin:0}
 .layout{display:grid;grid-template-columns:1fr;gap:25px;align-items:start}
 .panel{background:#111722;border:1px solid #24344d;border-radius:14px;padding:27px;box-shadow:0 20px 50px #0005}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:.82rem;font-weight:800;color:#e8edf5}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field-hint{display:block;margin-top:7px;color:#f5c400;font-size:.78rem;line-height:1.4}
+.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:.82rem;font-weight:800;color:#e8edf5}
 .origin-fixed{padding:13px 14px;border:1px solid #34445d;border-radius:7px;background:#0d1b30;display:flex;flex-direction:column;gap:3px}.origin-fixed strong{color:#f5c400}.origin-fixed span{font-size:.78rem;color:#aab2c0}
 input,select,textarea{width:100%;padding:13px 14px;border-radius:7px;border:1px solid #34445d;background:#090e17;color:#fff;font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--yellow)}
 .submit{border:0;cursor:pointer;width:100%;margin-top:20px;font:inherit;font-weight:900;background:var(--yellow);color:#080a0f;padding:15px;border-radius:7px}
@@ -86,7 +87,7 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 <div class="field"><label for="destino">CEP de destino</label><input id="destino" name="destino" inputmode="numeric" placeholder="00000-000" required></div>
 <div class="field"><label for="cidadeDestino">Cidade de destino</label><input id="cidadeDestino" name="cidadeDestino" type="text" placeholder="A cidade aparecerá após informar o CEP" readonly aria-live="polite"></div>
 <div class="field"><label for="valor">Valor da nota fiscal (R$)</label><input id="valor" name="valor" inputmode="decimal" placeholder="0,00" required></div>
-<div class="field"><label for="peso">Peso total (kg)</label><input id="peso" name="peso" type="number" min="0.01" step="0.01" placeholder="Ex.: 25" required></div>
+<div class="field"><label for="peso">Peso total (kg)</label><input id="peso" name="peso" type="number" min="0" max="15" step="0.01" placeholder="Ex.: 10" title="Informe um peso entre 0 e 15 kg" required><small class="field-hint">Obs.: O peso permitido para cotação é de 0 a 15 kg.</small></div>
 </div><button class="submit" type="submit">Enviar solicitação</button><p class="notice">Ambiente em fase inicial: o envio e o cálculo automático ainda serão ativados. Nenhum frete é calculado nesta versão de demonstração.</p></form></section>
 </div></main>
 <section class="ecommerce-banner" aria-label="Soluções para e-commerce">
