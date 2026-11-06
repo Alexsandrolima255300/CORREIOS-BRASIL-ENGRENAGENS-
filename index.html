@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5c400"><meta name="description" content="Solicite uma cotação de transporte com a Brasil Engrenagens.">
+<title>Brasil Engrenagens | Cotação de Frete</title>
+<style>
+:root{--yellow:#f5c400;--black:#090b10;--blue:#102b55;--white:#f7f8fb;--muted:#aab2c0}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+/* Tela inicial de carregamento */
+#siteLoader{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:25px;background:#000;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
+#siteLoader.loader-hidden{opacity:0;visibility:hidden;pointer-events:none}
+#siteLoader img{display:block;width:min(72vw,320px);max-height:150px;object-fit:contain;animation:loaderPulse 1.8s ease-in-out infinite}
+.loader-track{width:130px;height:4px;border-radius:10px;background:#26364d;overflow:hidden}
+.loader-track span{display:block;width:40%;height:100%;border-radius:10px;background:var(--yellow);animation:loaderProgress 1.15s ease-in-out infinite}
+.loader-caption{margin:0;color:#d6dce6;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+@keyframes loaderPulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.035);opacity:1}}
+@keyframes loaderProgress{0%{transform:translateX(-110%)}100%{transform:translateX(360%)}}
+@media(prefers-reduced-motion:reduce){#siteLoader img,.loader-track span{animation:none}}
+body{margin:0;background:var(--black);color:var(--white);font-family:Inter,Arial,sans-serif;line-height:1.5}
+header{position:relative!important;top:auto!important;z-index:auto!important;background:var(--yellow);color:#080a0f;padding:10px 6%;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;min-width:0}.greeting{color:#080a0f;font-size:1.05rem;font-weight:900;text-align:right;white-space:normal;flex:0 1 auto;min-width:0}.brand img{display:block;width:auto;max-width:min(52%,260px);height:auto;max-height:54px;object-fit:contain;flex:0 1 auto}
+nav{display:flex;gap:24px}nav a{color:#080a0f;text-decoration:none;font-weight:800;font-size:.9rem}
+.hero{padding:78px 6% 65px;background:radial-gradient(ellipse at 85% 25%,#173b70 0,transparent 38%),linear-gradient(120deg,#080a0f,#0b1424 72%,#0b0e15);border-bottom:1px solid #1d3558}
+.eyebrow{color:var(--yellow);font-weight:800;letter-spacing:.18em;text-transform:uppercase;font-size:.75rem}
+h1{font-size:clamp(2.5rem,6vw,5rem);line-height:1.02;max-width:780px;margin:18px 0}h1 em{color:var(--yellow);font-style:normal}
+.hero p{max-width:610px;color:#c2cad7;font-size:1.08rem}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.btn{display:inline-block;padding:14px 22px;border-radius:7px;text-decoration:none;font-weight:900}.primary{background:var(--yellow);color:#080a0f}.secondary{border:1px solid #42618d;color:#fff}
+main{padding:58px 6%;max-width:1250px;margin:auto}.section-head{margin-bottom:25px}.section-head h2{font-size:2rem;margin:4px 0}.section-head p{color:var(--muted);margin:0}
+.layout{display:grid;grid-template-columns:1fr;gap:25px;align-items:start}
+.panel{background:#111722;border:1px solid #24344d;border-radius:14px;padding:27px;box-shadow:0 20px 50px #0005}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field-hint{display:block;margin-top:7px;color:#f5c400;font-size:.78rem;line-height:1.4}
+.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:.82rem;font-weight:800;color:#e8edf5}
+.origin-fixed{padding:13px 14px;border:1px solid #34445d;border-radius:7px;background:#0d1b30;display:flex;flex-direction:column;gap:3px}.origin-fixed strong{color:#f5c400}.origin-fixed span{font-size:.78rem;color:#aab2c0}
+input,select,textarea{width:100%;padding:13px 14px;border-radius:7px;border:1px solid #34445d;background:#090e17;color:#fff;font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--yellow)}
+.submit{border:0;cursor:pointer;width:100%;margin-top:20px;font:inherit;font-weight:900;background:var(--yellow);color:#080a0f;padding:15px;border-radius:7px}
+.notice{font-size:.8rem;color:#aab2c0;margin-top:12px}
+.side h3{font-size:1.25rem;margin-top:0}.step{display:flex;gap:14px;margin:22px 0}.num{width:34px;height:34px;flex:none;border-radius:9px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900}.step p{margin:3px 0;color:#b8c1d0;font-size:.9rem}.step strong{color:#fff}
+.tag{display:inline-block;background:#152a49;color:#a9c8f5;padding:6px 10px;border-radius:5px;font-size:.72rem;font-weight:800}
+footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-size:.82rem;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}footer img{display:block;width:auto;max-width:min(48%,220px);max-height:58px;object-fit:contain}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.hero{padding-top:55px}nav{gap:12px}nav a{font-size:.78rem}}
+@media(max-width:520px){.brand{width:100%;gap:10px}.brand img{max-width:52%;max-height:48px}.greeting{font-size:clamp(.82rem,3.6vw,.98rem);max-width:48%;line-height:1.2}header{align-items:flex-start;flex-direction:column}nav{width:100%;justify-content:space-between}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:19px}main{padding:42px 5%}}
+.ecommerce-banner{padding:10px 5% 55px;display:flex;justify-content:center;align-items:center;background:var(--black)}.ecommerce-banner img{display:block;width:100%;max-width:560px;height:auto;object-fit:contain;border-radius:10px}
+.hero-banner{width:100%;margin:0;padding:0;background:var(--black);overflow:hidden}.hero-banner img{display:block;width:100%;height:auto;object-fit:contain}.bateu-ganhou-banner{width:100%;margin:0;padding:0;background:var(--black);overflow:hidden}.bateu-ganhou-banner img{display:block;width:100%;height:auto;object-fit:contain}
+
+/* Assistente virtual BELA */
+.bela-launcher{position:fixed;right:22px;bottom:22px;z-index:1000;width:82px;height:82px;padding:0;border:3px solid var(--yellow);border-radius:50%;background:#fff;box-shadow:0 8px 28px #0009;cursor:grab;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;transition:box-shadow .2s}.bela-launcher.dragging{cursor:grabbing;box-shadow:0 12px 36px #000c}
+.bela-launcher:hover{transform:scale(1.06);box-shadow:0 10px 32px #000b}
+.bela-dismiss{position:fixed;right:10px;bottom:92px;z-index:1002;width:27px;height:27px;padding:0;border:2px solid #fff;border-radius:50%;background:#17243a;color:#fff;font-size:19px;font-weight:800;line-height:21px;cursor:pointer;box-shadow:0 3px 10px #0009;display:grid;place-items:center}
+.bela-dismiss:hover{background:#b42318}
+.bela-dismiss:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.bela-launcher img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.bela-launcher:focus-visible,.bela-send:focus-visible,.bela-close:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.bela-label{position:fixed;right:112px;bottom:45px;z-index:999;background:var(--yellow);color:#080a0f;padding:7px 12px;border-radius:18px;font-size:.8rem;font-weight:900;box-shadow:0 4px 15px #0006;pointer-events:none}
+.bela-panel{position:fixed;right:22px;bottom:116px;z-index:1001;width:min(370px,calc(100vw - 28px));height:min(520px,calc(100dvh - 150px));display:none;flex-direction:column;overflow:hidden;background:#101722;border:1px solid #345078;border-radius:18px;box-shadow:0 18px 55px #000b}
+.bela-panel.open{display:flex}
+.bela-head{display:flex;align-items:center;gap:11px;padding:14px 16px;background:var(--yellow);color:#080a0f}
+.bela-avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#fff;border:2px solid #080a0f}
+.bela-head strong{display:block;font-size:1rem}.bela-status{display:block;font-size:.73rem;font-weight:700;opacity:.75}
+.bela-close{margin-left:auto;border:0;background:transparent;color:#080a0f;font-size:1.6rem;cursor:pointer;line-height:1}
+.bela-messages{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:11px}
+.bela-message{max-width:88%;padding:10px 12px;border-radius:13px;font-size:.88rem;line-height:1.4;white-space:pre-wrap}
+.bela-message.bot{align-self:flex-start;background:#1c2b40;color:#f7f8fb;border-bottom-left-radius:4px}
+.bela-message.user{align-self:flex-end;background:var(--yellow);color:#080a0f;border-bottom-right-radius:4px}
+.bela-quick{display:flex;flex-wrap:wrap;gap:7px;padding:0 14px 12px}
+.bela-quick button{border:1px solid #456184;background:#14243a;color:#f7f8fb;border-radius:18px;padding:7px 10px;font-size:.75rem;cursor:pointer}
+.bela-form{display:flex;gap:8px;padding:12px;border-top:1px solid #2a3b53;background:#0c121c}
+.bela-input{min-width:0;flex:1;padding:11px 12px;border-radius:22px;border:1px solid #3a4c65;background:#080d15;color:#fff;font:inherit;font-size:.87rem}
+.bela-send{border:0;border-radius:50%;width:42px;height:42px;background:var(--yellow);color:#080a0f;font-size:1.1rem;font-weight:900;cursor:pointer}
+.bela-disclaimer{padding:0 14px 10px;color:#9eabbc;font-size:.67rem;text-align:center}
+@media(max-width:520px){.bela-launcher{width:72px;height:72px;right:15px;bottom:15px}.bela-dismiss{right:8px;bottom:79px;width:25px;height:25px;font-size:17px;line-height:19px}.bela-label{right:96px;bottom:37px}.bela-panel{right:10px;bottom:98px;width:calc(100vw - 20px);height:min(500px,calc(100dvh - 120px))}}
+
+</style>
+</head>
+<body>
+<div id="siteLoader" role="status" aria-label="Carregando o site">
+  <img src="/WhatsApp%20Image%202026-11-06%20at%2017.15.20.jpeg" alt="Brasil Engrenagens">
+  <div class="loader-track" aria-hidden="true"><span></span></div>
+  <p class="loader-caption">Preparando sua experiência</p>
+</div>
+<header><div class="brand"><img src="/WhatsApp%20Image%202026-11-06%20at%2017.15.20.jpeg" alt="Logo Brasil Engrenagens"><span class="greeting">Olá Brasil Engrenagens</span></div></header>
+<section class="hero-banner" aria-label="Banner principal"><picture><source media="(min-width: 801px)" srcset="/banner-principal-desktop.png"><img src="/banner-principal-mobile.png" alt="Banner principal"></picture></section>
+<section class="bateu-ganhou-banner" aria-label="Campanha Bateu, Ganhou"><picture><source media="(min-width: 801px)" srcset="/bateu-ganhou-desktop.png"><img src="/bateu-ganhou-mobile%20(1).png" alt="Campanha Bateu, Ganhou" loading="lazy"></picture></section>
+<main id="cotacao"><div class="section-head"><span class="tag">FORMULÁRIO DE SOLICITAÇÃO</span><h2>Dados para cotação</h2><p>Informe apenas o destino, o valor da nota fiscal e o peso total da carga.</p></div>
+<div class="layout"><section class="panel"><form id="quoteForm"><div class="form-grid">
+<div class="field full"><label>Origem do transporte</label><div class="origin-fixed"><strong>Centro de Distribuição Brasil Engrenagens</strong><span>Endereço de origem já definido pela empresa — não precisa preencher.</span></div></div>
+<div class="field"><label for="destino">CEP de destino</label><input id="destino" name="destino" inputmode="numeric" placeholder="00000-000" required></div>
+<div class="field"><label for="cidadeDestino">Cidade de destino</label><input id="cidadeDestino" name="cidadeDestino" type="text" placeholder="A cidade aparecerá após informar o CEP" readonly aria-live="polite"></div>
+<div class="field"><label for="valor">Valor da nota fiscal (R$)</label><input id="valor" name="valor" inputmode="decimal" placeholder="0,00" required></div>
+<div class="field"><label for="peso">Peso total (kg)</label><input id="peso" name="peso" type="number" min="0" max="15" step="0.01" placeholder="Ex.: 10" title="Informe um peso entre 0 e 15 kg" required><small class="field-hint">Obs.: O peso permitido para cotação é de 0 a 15 kg.</small></div>
+</div><button class="submit" type="submit">Enviar solicitação</button><p class="notice">Ambiente em fase inicial: o envio e o cálculo automático ainda serão ativados. Nenhum frete é calculado nesta versão de demonstração.</p></form></section>
+</div></main>
+<section class="ecommerce-banner" aria-label="Soluções para e-commerce">
+  <picture><source media="(min-width: 801px)" srcset="/solucoes-para-e-commerce-desktop.png"><img src="/solucoes-para-e-commerce-mobile.png" alt="Soluções para e-commerce" loading="lazy"></picture>
+</section>
+<footer><img src="/image.png" alt="Identidade visual da Brasil Engrenagens"><span>Desenvolvido por Alexsandro Paulo de Lima Assis</span></footer>
+
+<button class="bela-launcher" id="belaLauncher" type="button" aria-label="Abrir conversa com BELA" aria-expanded="false" aria-controls="belaPanel"><img src="/file_00000000d930820e8b1fbb72c66cfeb6.png" alt=""></button>
+<button class="bela-dismiss" id="belaDismiss" type="button" aria-label="Fechar assistente BELA" title="Fechar assistente">×</button>
+<span class="bela-label" id="belaLabel">Fale com a BELA</span>
+<section class="bela-panel" id="belaPanel" role="dialog" aria-label="Assistente virtual BELA" aria-modal="false">
+  <div class="bela-head"><img class="bela-avatar" src="/file_00000000d930820e8b1fbb72c66cfeb6.png" alt=""><div><strong>BELA</strong><span class="bela-status">Assistente virtual • Brasil Engrenagens</span></div><button class="bela-close" id="belaClose" type="button" aria-label="Fechar conversa">×</button></div>
+  <div class="bela-messages" id="belaMessages" aria-live="polite"><div class="bela-message bot">Olá! Eu sou a BELA, assistente virtual da Brasil Engrenagens. 💛
+Como posso ajudar você hoje?</div></div>
+  <div class="bela-quick" id="belaQuick"><button type="button" data-question="Como faço uma cotação?">Fazer cotação</button><button type="button" data-question="Quais dados preciso informar?">Dados necessários</button><button type="button" data-question="Como funciona a entrega?">Entrega</button><button type="button" data-question="Como funciona a Black Friday dos Correios?">Black Friday</button><button type="button" data-question="Por que seu nome é BELA?">Por que BELA?</button></div>
+  <form class="bela-form" id="belaForm"><input class="bela-input" id="belaInput" type="text" placeholder="Digite sua dúvida..." autocomplete="off" aria-label="Digite sua mensagem" required><button class="bela-send" type="submit" aria-label="Enviar mensagem">➤</button></form>
+  <div class="bela-disclaimer">Atendimento inicial demonstrativo. A integração com IA será ativada na próxima etapa.</div>
+</section>
+
+<script>
+(function(){
+ const loader=document.getElementById('siteLoader');
+ let hidden=false;
+ function hideLoader(){
+   if(hidden)return;
+   hidden=true;
+   loader.classList.add('loader-hidden');
+   window.setTimeout(()=>loader.remove(),500);
+ }
+ window.addEventListener('load',()=>window.setTimeout(hideLoader,2450),{once:true});
+ window.setTimeout(hideLoader,8000);
+})();
+</script>
+<script>
+document.getElementById('quoteForm').addEventListener('submit',function(e){e.preventDefault();alert('Obrigado! Esta é uma versão de demonstração. O envio de solicitações será ativado quando configurarmos a integração.');});
+
+// Consulta automática do CEP e preenchimento da cidade/UF via ViaCEP.
+const cepDestino=document.getElementById('destino');
+const cidadeDestino=document.getElementById('cidadeDestino');
+let ultimoCepConsultado='';
+cepDestino.addEventListener('input',()=>{
+  const digits=cepDestino.value.replace(/\D/g,'').slice(0,8);
+  cepDestino.value=digits.length>5?digits.slice(0,5)+'-'+digits.slice(5):digits;
+  if(digits.length!==8){cidadeDestino.value='';ultimoCepConsultado='';}
+});
+async function consultarCidadePorCep(){
+  const cep=cepDestino.value.replace(/\D/g,'');
+  if(cep.length!==8||cep===ultimoCepConsultado)return;
+  ultimoCepConsultado=cep;
+  cidadeDestino.value='Consultando CEP...';
+  try{
+    const response=await fetch('https://viacep.com.br/ws/'+cep+'/json/');
+    if(!response.ok)throw new Error('Falha na consulta');
+    const data=await response.json();
+    if(data.erro){cidadeDestino.value='CEP não encontrado';ultimoCepConsultado='';return;}
+    cidadeDestino.value=[data.localidade,data.uf].filter(Boolean).join(' - ');
+  }catch(error){
+    cidadeDestino.value='Não foi possível consultar. Confira o CEP.';
+    ultimoCepConsultado='';
+  }
+}
+cepDestino.addEventListener('blur',consultarCidadePorCep);
+
+
+const belaLauncher=document.getElementById('belaLauncher');
+const belaPanel=document.getElementById('belaPanel');
+const belaLabel=document.getElementById('belaLabel');
+const belaMessages=document.getElementById('belaMessages');
+const belaInput=document.getElementById('belaInput');
+let belaPosition=null;
+let belaDrag=null;
+let belaIgnoreClickUntil=0;
+function clampBela(value,min,max){return Math.min(Math.max(value,min),Math.max(min,max));}
+function placeBela(x,y){
+  const size=belaLauncher.offsetWidth||82;
+  x=clampBela(x,8,window.innerWidth-size-8);
+  y=clampBela(y,8,window.innerHeight-size-8);
+  belaPosition={x,y};
+  belaLauncher.style.cssText += '';
+  Object.assign(belaLauncher.style,{left:x+'px',top:y+'px',right:'auto',bottom:'auto'});
+  const dismiss=document.getElementById('belaDismiss');
+  Object.assign(dismiss.style,{left:(x+size-14)+'px',top:(y-10)+'px',right:'auto',bottom:'auto'});
+  Object.assign(belaLabel.style,{left:Math.max(8,x-150)+'px',top:(y+size/2-17)+'px',right:'auto',bottom:'auto'});
+  const panelWidth=Math.min(370,window.innerWidth-20);
+  const panelHeight=Math.min(520,window.innerHeight-120);
+  const panelLeft=clampBela(x+size-panelWidth,8,window.innerWidth-panelWidth-8);
+  let panelTop=y-panelHeight-12;
+  if(panelTop<8)panelTop=y+size+12;
+  panelTop=clampBela(panelTop,8,window.innerHeight-panelHeight-8);
+  Object.assign(belaPanel.style,{left:panelLeft+'px',top:panelTop+'px',right:'auto',bottom:'auto'});
+}
+belaLauncher.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  const rect=belaLauncher.getBoundingClientRect();
+  belaDrag={id:e.pointerId,x:e.clientX,y:e.clientY,left:rect.left,top:rect.top,moved:false};
+});
+window.addEventListener('pointermove',e=>{
+  if(!belaDrag||e.pointerId!==belaDrag.id)return;
+  const dx=e.clientX-belaDrag.x,dy=e.clientY-belaDrag.y;
+  if(!belaDrag.moved&&Math.hypot(dx,dy)<4)return;
+  belaDrag.moved=true;
+  belaLauncher.classList.add('dragging');
+  placeBela(belaDrag.left+dx,belaDrag.top+dy);
+  if(e.cancelable)e.preventDefault();
+},{passive:false});
+function finishBelaDrag(e){
+  if(!belaDrag||e.pointerId!==belaDrag.id)return;
+  if(belaDrag.moved)belaIgnoreClickUntil=Date.now()+450;
+  belaDrag=null;
+  belaLauncher.classList.remove('dragging');
+}
+window.addEventListener('pointerup',finishBelaDrag);
+window.addEventListener('pointercancel',finishBelaDrag);
+function toggleBela(open){
+  belaPanel.classList.toggle('open',open);
+  belaLauncher.setAttribute('aria-expanded',String(open));
+  belaLabel.style.display=open?'none':'block';
+  if(open){if(belaPosition)placeBela(belaPosition.x,belaPosition.y);belaInput.focus();}
+}
+belaLauncher.addEventListener('click',()=>{
+  if(Date.now()<belaIgnoreClickUntil)return;
+  toggleBela(!belaPanel.classList.contains('open'));
+});
+window.addEventListener('resize',()=>{if(belaPosition)placeBela(belaPosition.x,belaPosition.y);});
+document.getElementById('belaDismiss').addEventListener('click',()=>{toggleBela(false);belaLauncher.style.display='none';belaLabel.style.display='none';document.getElementById('belaDismiss').style.display='none';});
+document.getElementById('belaClose').addEventListener('click',()=>toggleBela(false));
+function belaReply(question){
+ const q=question.toLocaleLowerCase('pt-BR');
+ if(q.includes('bela')||q.includes('seu nome')||q.includes('por que')||q.includes('porque')||q.includes('significa seu nome')) return 'Meu nome é BELA porque reúne as iniciais de Brasil Engrenagens, Logística e Atendimento. 💛 Foi escolhido para representar a empresa e o meu papel: ser uma assistente próxima, acolhedora e pronta para ajudar você com informações sobre cotação e atendimento. E BELA também combina com a ideia de tornar sua experiência mais simples e agradável!';
+ if(q.includes('cotação')||q.includes('cotacao')||q.includes('frete')) return 'Para solicitar uma cotação, preencha o formulário do site com o CEP de destino, o valor da nota fiscal e o peso total da carga. O cálculo e o envio automático ainda estão em configuração.';
+ if(q.includes('dado')||q.includes('inform')) return 'Nesta etapa, precisamos do CEP de destino, valor da nota fiscal e peso total da carga. A origem já está definida como Centro de Distribuição Brasil Engrenagens.';
+ if(q.includes('entrega')||q.includes('prazo')||q.includes('rast')) return 'Os prazos e o acompanhamento da entrega dependem da transportadora escolhida. A consulta automática dessas informações ainda será integrada ao site.';
+ if(q.includes('black friday')||q.includes('blackfriday')||q.includes('desconto')||q.includes('platinum')||q.includes('diamante')||q.includes('postagem')||q.includes('postagens')) return 'A campanha Black Friday dos Correios funciona com uma vantagem para o mês seguinte: quanto maior for o volume de postagens realizado durante a campanha, maiores poderão ser os descontos aplicados no próximo mês, conforme as regras e condições da promoção.\n\nClientes com contrato: contas nas categorias Platinum e Diamante podem ter descontos de 15% a 35% nas postagens.\n\nO percentual efetivo e as condições especiais dependem do volume de postagens e do enquadramento da conta nas regras da campanha. A BELA não consulta o contrato nem calcula o desconto individual; para confirmar o benefício aplicável, consulte o representante ou canal comercial dos Correios.';
+ if(q.includes('olá')||q.includes('ola')||q.includes('bom dia')||q.includes('boa tarde')||q.includes('boa noite')) return 'Olá! 💛 Que bom falar com você. Posso orientar sobre cotação, dados necessários e informações de entrega.';
+ return 'Não tenho essa informação com segurança e prefiro não inventar uma resposta. Para receber ajuda, entre em contato com o Alex pelo telefone/WhatsApp: (34) 99140-1087. 💛';
+}
+function addBelaMessage(text,who){const el=document.createElement('div');el.className='bela-message '+who;el.textContent=text;belaMessages.appendChild(el);belaMessages.scrollTop=belaMessages.scrollHeight;}
+function sendBela(text){const value=(text||'').trim();if(!value)return;addBelaMessage(value,'user');belaInput.value='';window.setTimeout(()=>addBelaMessage(belaReply(value),'bot'),250);}
+document.getElementById('belaForm').addEventListener('submit',e=>{e.preventDefault();sendBela(belaInput.value);});
+document.getElementById('belaQuick').addEventListener('click',e=>{const b=e.target.closest('button[data-question]');if(b)sendBela(b.dataset.question);});
+
+</script>
+</body></html>
