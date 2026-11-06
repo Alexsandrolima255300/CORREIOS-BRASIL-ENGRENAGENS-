@@ -6,7 +6,18 @@
 <title>Brasil Engrenagens | Cotação de Frete</title>
 <style>
 :root{--yellow:#f5c400;--black:#090b10;--blue:#102b55;--white:#f7f8fb;--muted:#aab2c0}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--black);color:var(--white);font-family:Inter,Arial,sans-serif;line-height:1.5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+/* Tela inicial de carregamento */
+#siteLoader{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:25px;background:radial-gradient(ellipse at center,#142b4c 0%,#090b10 68%);opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s ease}
+#siteLoader.loader-hidden{opacity:0;visibility:hidden;pointer-events:none}
+#siteLoader img{display:block;width:min(72vw,320px);max-height:150px;object-fit:contain;animation:loaderPulse 1.8s ease-in-out infinite}
+.loader-track{width:130px;height:4px;border-radius:10px;background:#26364d;overflow:hidden}
+.loader-track span{display:block;width:40%;height:100%;border-radius:10px;background:var(--yellow);animation:loaderProgress 1.15s ease-in-out infinite}
+.loader-caption{margin:0;color:#d6dce6;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+@keyframes loaderPulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.035);opacity:1}}
+@keyframes loaderProgress{0%{transform:translateX(-110%)}100%{transform:translateX(360%)}}
+@media(prefers-reduced-motion:reduce){#siteLoader img,.loader-track span{animation:none}}
+body{margin:0;background:var(--black);color:var(--white);font-family:Inter,Arial,sans-serif;line-height:1.5}
 header{position:relative!important;top:auto!important;z-index:auto!important;background:var(--yellow);color:#080a0f;padding:10px 6%;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .brand{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;min-width:0}.greeting{color:#080a0f;font-size:1.05rem;font-weight:900;text-align:right;white-space:normal;flex:0 1 auto;min-width:0}.brand img{display:block;width:auto;max-width:min(52%,260px);height:auto;max-height:54px;object-fit:contain;flex:0 1 auto}
 nav{display:flex;gap:24px}nav a{color:#080a0f;text-decoration:none;font-weight:800;font-size:.9rem}
@@ -61,6 +72,11 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 </style>
 </head>
 <body>
+<div id="siteLoader" role="status" aria-label="Carregando o site">
+  <img src="/file_000000006b74820eafc49a2edaa6a2a8.png" alt="Brasil Engrenagens">
+  <div class="loader-track" aria-hidden="true"><span></span></div>
+  <p class="loader-caption">Preparando sua experiência</p>
+</div>
 <header><div class="brand"><img src="/file_000000006b74820eafc49a2edaa6a2a8.png" alt="Logo Brasil Engrenagens"><span class="greeting">Olá Brasil Engrenagens</span></div></header>
 <section class="hero-banner" aria-label="Banner principal"><img src="/banner-principal-mobile.png" alt="Banner principal"></section>
 <section class="bateu-ganhou-banner" aria-label="Campanha Bateu, Ganhou"><img src="/bateu-ganhou-mobile%20(1).png" alt="Campanha Bateu, Ganhou" loading="lazy"></section>
@@ -90,6 +106,20 @@ Como posso ajudar você hoje?</div></div>
   <div class="bela-disclaimer">Atendimento inicial demonstrativo. A integração com IA será ativada na próxima etapa.</div>
 </section>
 
+<script>
+(function(){
+ const loader=document.getElementById('siteLoader');
+ let hidden=false;
+ function hideLoader(){
+   if(hidden)return;
+   hidden=true;
+   loader.classList.add('loader-hidden');
+   window.setTimeout(()=>loader.remove(),500);
+ }
+ window.addEventListener('load',()=>window.setTimeout(hideLoader,450),{once:true});
+ window.setTimeout(hideLoader,6000);
+})();
+</script>
 <script>
 document.getElementById('quoteForm').addEventListener('submit',function(e){e.preventDefault();alert('Obrigado! Esta é uma versão de demonstração. O envio de solicitações será ativado quando configurarmos a integração.');});
 
