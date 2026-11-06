@@ -68,6 +68,7 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 <div class="layout"><section class="panel"><form id="quoteForm"><div class="form-grid">
 <div class="field full"><label>Origem do transporte</label><div class="origin-fixed"><strong>Centro de Distribuição Brasil Engrenagens</strong><span>Endereço de origem já definido pela empresa — não precisa preencher.</span></div></div>
 <div class="field"><label for="destino">CEP de destino</label><input id="destino" name="destino" inputmode="numeric" placeholder="00000-000" required></div>
+<div class="field"><label for="cidadeDestino">Cidade de destino</label><input id="cidadeDestino" name="cidadeDestino" type="text" placeholder="A cidade aparecerá após informar o CEP" readonly aria-live="polite"></div>
 <div class="field"><label for="valor">Valor da nota fiscal (R$)</label><input id="valor" name="valor" inputmode="decimal" placeholder="0,00" required></div>
 <div class="field"><label for="peso">Peso total (kg)</label><input id="peso" name="peso" type="number" min="0.01" step="0.01" placeholder="Ex.: 25" required></div>
 </div><button class="submit" type="submit">Enviar solicitação</button><p class="notice">Ambiente em fase inicial: o envio e o cálculo automático ainda serão ativados. Nenhum frete é calculado nesta versão de demonstração.</p></form></section>
@@ -91,6 +92,34 @@ Como posso ajudar você hoje?</div></div>
 
 <script>
 document.getElementById('quoteForm').addEventListener('submit',function(e){e.preventDefault();alert('Obrigado! Esta é uma versão de demonstração. O envio de solicitações será ativado quando configurarmos a integração.');});
+
+// Consulta automática do CEP e preenchimento da cidade/UF via ViaCEP.
+const cepDestino=document.getElementById('destino');
+const cidadeDestino=document.getElementById('cidadeDestino');
+let ultimoCepConsultado='';
+cepDestino.addEventListener('input',()=>{
+  const digits=cepDestino.value.replace(/\\D/g,'').slice(0,8);
+  cepDestino.value=digits.length>5?digits.slice(0,5)+'-'+digits.slice(5):digits;
+  if(digits.length!==8){cidadeDestino.value='';ultimoCepConsultado='';}
+});
+async function consultarCidadePorCep(){
+  const cep=cepDestino.value.replace(/\\D/g,'');
+  if(cep.length!==8||cep===ultimoCepConsultado)return;
+  ultimoCepConsultado=cep;
+  cidadeDestino.value='Consultando CEP...';
+  try{
+    const response=await fetch('https://viacep.com.br/ws/'+cep+'/json/');
+    if(!response.ok)throw new Error('Falha na consulta');
+    const data=await response.json();
+    if(data.erro){cidadeDestino.value='CEP não encontrado';ultimoCepConsultado='';return;}
+    cidadeDestino.value=[data.localidade,data.uf].filter(Boolean).join(' - ');
+  }catch(error){
+    cidadeDestino.value='Não foi possível consultar. Confira o CEP.';
+    ultimoCepConsultado='';
+  }
+}
+cepDestino.addEventListener('blur',consultarCidadePorCep);
+
 
 const belaLauncher=document.getElementById('belaLauncher');
 const belaPanel=document.getElementById('belaPanel');
