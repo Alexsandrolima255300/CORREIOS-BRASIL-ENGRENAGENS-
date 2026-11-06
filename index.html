@@ -44,7 +44,7 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 .hero-banner{width:100%;margin:0;padding:0;background:var(--black);overflow:hidden}.hero-banner img{display:block;width:100%;height:auto;object-fit:contain}.bateu-ganhou-banner{width:100%;margin:0;padding:0;background:var(--black);overflow:hidden}.bateu-ganhou-banner img{display:block;width:100%;height:auto;object-fit:contain}
 
 /* Assistente virtual BELA */
-.bela-launcher{position:fixed;right:22px;bottom:22px;z-index:1000;width:82px;height:82px;padding:0;border:3px solid var(--yellow);border-radius:50%;background:#fff;box-shadow:0 8px 28px #0009;cursor:pointer;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.bela-launcher{position:fixed;right:22px;bottom:22px;z-index:1000;width:82px;height:82px;padding:0;border:3px solid var(--yellow);border-radius:50%;background:#fff;box-shadow:0 8px 28px #0009;cursor:grab;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;transition:box-shadow .2s}.bela-launcher.dragging{cursor:grabbing;box-shadow:0 12px 36px #000c}
 .bela-launcher:hover{transform:scale(1.06);box-shadow:0 10px 32px #000b}
 .bela-dismiss{position:fixed;right:10px;bottom:92px;z-index:1002;width:27px;height:27px;padding:0;border:2px solid #fff;border-radius:50%;background:#17243a;color:#fff;font-size:19px;font-weight:800;line-height:21px;cursor:pointer;box-shadow:0 3px 10px #0009;display:grid;place-items:center}
 .bela-dismiss:hover{background:#b42318}
@@ -157,8 +157,70 @@ const belaPanel=document.getElementById('belaPanel');
 const belaLabel=document.getElementById('belaLabel');
 const belaMessages=document.getElementById('belaMessages');
 const belaInput=document.getElementById('belaInput');
-function toggleBela(open){belaPanel.classList.toggle('open',open);belaLauncher.setAttribute('aria-expanded',String(open));belaLabel.style.display=open?'none':'block';if(open)belaInput.focus();}
-belaLauncher.addEventListener('click',()=>toggleBela(!belaPanel.classList.contains('open')));
+let belaPosition=null;
+let belaDrag=null;
+let belaWasDragged=false;
+let belaSuppressClick=false;
+function clampBela(value,min,max){return Math.min(Math.max(value,min),Math.max(min,max));}
+function placeBela(x,y){
+  const size=belaLauncher.offsetWidth;
+  x=clampBela(x,8,window.innerWidth-size-8);
+  y=clampBela(y,8,window.innerHeight-size-8);
+  belaPosition={x,y};
+  belaLauncher.style.left=x+'px';belaLauncher.style.top=y+'px';
+  belaLauncher.style.right='auto';belaLauncher.style.bottom='auto';
+  document.getElementById('belaDismiss').style.left=(x+size-14)+'px';
+  document.getElementById('belaDismiss').style.top=(y-10)+'px';
+  document.getElementById('belaDismiss').style.right='auto';
+  document.getElementById('belaDismiss').style.bottom='auto';
+  belaLabel.style.left=Math.max(8,x-150)+'px';
+  belaLabel.style.top=(y+size/2-17)+'px';
+  belaLabel.style.right='auto';belaLabel.style.bottom='auto';
+  const panelWidth=belaPanel.offsetWidth||370;
+  const panelHeight=belaPanel.offsetHeight||520;
+  const panelLeft=clampBela(x+size-panelWidth,8,window.innerWidth-panelWidth-8);
+  let panelTop=y-panelHeight-12;
+  if(panelTop<8)panelTop=y+size+12;
+  panelTop=clampBela(panelTop,8,window.innerHeight-panelHeight-8);
+  belaPanel.style.left=panelLeft+'px';belaPanel.style.top=panelTop+'px';
+  belaPanel.style.right='auto';belaPanel.style.bottom='auto';
+}
+belaLauncher.addEventListener('pointerdown',e=>{
+  if(e.button!==undefined&&e.button!==0)return;
+  const rect=belaLauncher.getBoundingClientRect();
+  belaDrag={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,left:rect.left,top:rect.top,moved:false};
+  belaWasDragged=false;
+  belaLauncher.setPointerCapture(e.pointerId);
+});
+belaLauncher.addEventListener('pointermove',e=>{
+  if(!belaDrag||e.pointerId!==belaDrag.pointerId)return;
+  const dx=e.clientX-belaDrag.startX,dy=e.clientY-belaDrag.startY;
+  if(!belaDrag.moved&&Math.hypot(dx,dy)<5)return;
+  belaDrag.moved=true;belaWasDragged=true;
+  belaLauncher.classList.add('dragging');
+  placeBela(belaDrag.left+dx,belaDrag.top+dy);
+  e.preventDefault();
+});
+function finishBelaDrag(e){
+  if(!belaDrag||e.pointerId!==belaDrag.pointerId)return;
+  const moved=belaDrag.moved;
+  belaDrag=null;
+  belaLauncher.classList.remove('dragging');
+  if(moved){belaSuppressClick=true;requestAnimationFrame(()=>{belaSuppressClick=false;});}
+}
+belaLauncher.addEventListener('pointerup',finishBelaDrag);
+belaLauncher.addEventListener('pointercancel',finishBelaDrag);
+function toggleBela(open){
+  belaPanel.classList.toggle('open',open);
+  belaLauncher.setAttribute('aria-expanded',String(open));
+  belaLabel.style.display=open?'none':'block';
+  if(open){if(belaPosition)placeBela(belaPosition.x,belaPosition.y);belaInput.focus();}
+}
+belaLauncher.addEventListener('click',()=>{
+  if(belaSuppressClick||belaWasDragged){belaWasDragged=false;return;}
+  toggleBela(!belaPanel.classList.contains('open'));
+});
+window.addEventListener('resize',()=>{if(belaPosition)placeBela(belaPosition.x,belaPosition.y);});
 document.getElementById('belaDismiss').addEventListener('click',()=>{toggleBela(false);belaLauncher.style.display='none';belaLabel.style.display='none';document.getElementById('belaDismiss').style.display='none';});
 document.getElementById('belaClose').addEventListener('click',()=>toggleBela(false));
 function belaReply(question){
