@@ -84,7 +84,7 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
   <div class="bela-head"><img class="bela-avatar" src="/file_00000000d930820e8b1fbb72c66cfeb6.png" alt=""><div><strong>BELA</strong><span class="bela-status">Assistente virtual • Brasil Engrenagens</span></div><button class="bela-close" id="belaClose" type="button" aria-label="Fechar conversa">×</button></div>
   <div class="bela-messages" id="belaMessages" aria-live="polite"><div class="bela-message bot">Olá! Eu sou a BELA, assistente virtual da Brasil Engrenagens. 💛
 Como posso ajudar você hoje?</div></div>
-  <div class="bela-quick" id="belaQuick"><button type="button" data-question="Como faço uma cotação?">Fazer cotação</button><button type="button" data-question="Quais dados preciso informar?">Dados necessários</button><button type="button" data-question="Como funciona a entrega?">Entrega</button><button type="button" data-question="Como funciona a Black Friday dos Correios?">Black Friday</button></div>
+  <div class="bela-quick" id="belaQuick"><button type="button" data-question="Como faço uma cotação?">Fazer cotação</button><button type="button" data-question="Quais dados preciso informar?">Dados necessários</button><button type="button" data-question="Como funciona a entrega?">Entrega</button><button type="button" data-question="Como funciona a Black Friday dos Correios?">Black Friday</button><button type="button" data-question="Por que seu nome é BELA?">Por que BELA?</button></div>
   <form class="bela-form" id="belaForm"><input class="bela-input" id="belaInput" type="text" placeholder="Digite sua dúvida..." autocomplete="off" aria-label="Digite sua mensagem" required><button class="bela-send" type="submit" aria-label="Enviar mensagem">➤</button></form>
   <div class="bela-disclaimer">Atendimento inicial demonstrativo. A integração com IA será ativada na próxima etapa.</div>
 </section>
@@ -103,6 +103,7 @@ document.getElementById('belaDismiss').addEventListener('click',()=>{toggleBela(
 document.getElementById('belaClose').addEventListener('click',()=>toggleBela(false));
 function belaReply(question){
  const q=question.toLocaleLowerCase('pt-BR');
+ if(q.includes('bela')||q.includes('seu nome')||q.includes('por que')||q.includes('porque')||q.includes('significa seu nome')) return 'Meu nome é BELA porque reúne as iniciais de Brasil Engrenagens, Logística e Atendimento. 💛 Foi escolhido para representar a empresa e o meu papel: ser uma assistente próxima, acolhedora e pronta para ajudar você com informações sobre cotação e atendimento. E BELA também combina com a ideia de tornar sua experiência mais simples e agradável!';
  if(q.includes('cotação')||q.includes('cotacao')||q.includes('frete')) return 'Para solicitar uma cotação, preencha o formulário do site com o CEP de destino, o valor da nota fiscal e o peso total da carga. O cálculo e o envio automático ainda estão em configuração.';
  if(q.includes('dado')||q.includes('inform')) return 'Nesta etapa, precisamos do CEP de destino, valor da nota fiscal e peso total da carga. A origem já está definida como Centro de Distribuição Brasil Engrenagens.';
  if(q.includes('entrega')||q.includes('prazo')||q.includes('rast')) return 'Os prazos e o acompanhamento da entrega dependem da transportadora escolhida. A consulta automática dessas informações ainda será integrada ao site.';
