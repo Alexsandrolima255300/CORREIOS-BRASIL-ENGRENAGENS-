@@ -8,7 +8,7 @@
 :root{--yellow:#f5c400;--black:#090b10;--blue:#102b55;--white:#f7f8fb;--muted:#aab2c0}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--black);color:var(--white);font-family:Inter,Arial,sans-serif;line-height:1.5}
 header{background:var(--yellow);color:#080a0f;padding:17px 6%;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.brand{font-weight:900;font-size:1.1rem;letter-spacing:.04em}.brand span{display:block;font-size:.65rem;letter-spacing:.22em;font-weight:700}
+.brand{display:flex;align-items:center;min-width:0}.brand img{display:block;width:auto;max-width:min(100%,260px);height:auto;max-height:64px;object-fit:contain}
 nav{display:flex;gap:24px}nav a{color:#080a0f;text-decoration:none;font-weight:800;font-size:.9rem}
 .hero{padding:78px 6% 65px;background:radial-gradient(ellipse at 85% 25%,#173b70 0,transparent 38%),linear-gradient(120deg,#080a0f,#0b1424 72%,#0b0e15);border-bottom:1px solid #1d3558}
 .eyebrow{color:var(--yellow);font-weight:800;letter-spacing:.18em;text-transform:uppercase;font-size:.75rem}
@@ -27,12 +27,12 @@ input,select,textarea{width:100%;padding:13px 14px;border-radius:7px;border:1px 
 .tag{display:inline-block;background:#152a49;color:#a9c8f5;padding:6px 10px;border-radius:5px;font-size:.72rem;font-weight:800}
 footer{border-top:1px solid #26344a;padding:25px 6%;color:#8d98a9;font-size:.82rem;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
 @media(max-width:800px){.layout{grid-template-columns:1fr}.hero{padding-top:55px}nav{gap:12px}nav a{font-size:.78rem}}
-@media(max-width:520px){header{align-items:flex-start;flex-direction:column}nav{width:100%;justify-content:space-between}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:19px}main{padding:42px 5%}}
+@media(max-width:520px){.brand img{max-width:220px;max-height:58px}header{align-items:flex-start;flex-direction:column}nav{width:100%;justify-content:space-between}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:19px}main{padding:42px 5%}}
 .ecommerce-banner{padding:10px 5% 55px;display:flex;justify-content:center;align-items:center;background:var(--black)}.ecommerce-banner img{display:block;width:100%;max-width:560px;height:auto;object-fit:contain;border-radius:10px}
 </style>
 </head>
 <body>
-<header><div class="brand">BRASIL ENGRENAGENS<span>LOGÍSTICA • COTAÇÃO DE FRETE</span></div><nav><a href="#cotacao">Solicitar cotação</a></nav></header>
+<header><div class="brand"><img src="/IMG_7867facd-fbd7-424b-8e7a-cc55dbf8506d.jpg" alt="Logo Brasil Engrenagens"></div><nav><a href="#cotacao">Solicitar cotação</a></nav></header>
 <section class="hero"><div class="eyebrow">Soluções em transporte</div><h1>Seu frete, com mais <em>clareza.</em></h1><p>Envie os dados da sua carga e solicite uma cotação à equipe da Brasil Engrenagens. Um processo simples, direto e transparente.</p><div class="actions"><a class="btn primary" href="#cotacao">Solicitar cotação</a></div></section>
 <main id="cotacao"><div class="section-head"><span class="tag">FORMULÁRIO DE SOLICITAÇÃO</span><h2>Dados para cotação</h2><p>Informe apenas o destino, o valor da nota fiscal e o peso total da carga.</p></div>
 <div class="layout"><section class="panel"><form id="quoteForm"><div class="form-grid">
