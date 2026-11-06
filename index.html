@@ -8,7 +8,7 @@
 :root{--yellow:#f5c400;--black:#090b10;--blue:#102b55;--white:#f7f8fb;--muted:#aab2c0}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--black);color:var(--white);font-family:Inter,Arial,sans-serif;line-height:1.5}
 header{background:var(--yellow);color:#080a0f;padding:10px 6%;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.brand{display:flex;align-items:center;min-width:0}.brand img{display:block;width:auto;max-width:min(100%,260px);height:auto;max-height:54px;object-fit:contain}
+.brand{display:flex;align-items:center;gap:18px;min-width:0}.greeting{color:#080a0f;font-size:1.05rem;font-weight:900;white-space:nowrap}.brand img{display:block;width:auto;max-width:min(100%,260px);height:auto;max-height:54px;object-fit:contain}
 nav{display:flex;gap:24px}nav a{color:#080a0f;text-decoration:none;font-weight:800;font-size:.9rem}
 .hero{padding:78px 6% 65px;background:radial-gradient(ellipse at 85% 25%,#173b70 0,transparent 38%),linear-gradient(120deg,#080a0f,#0b1424 72%,#0b0e15);border-bottom:1px solid #1d3558}
 .eyebrow{color:var(--yellow);font-weight:800;letter-spacing:.18em;text-transform:uppercase;font-size:.75rem}
@@ -33,7 +33,7 @@ footer{border-top:1px solid #26344a;padding:25px 6%;color:#8d98a9;font-size:.82r
 </style>
 </head>
 <body>
-<header><div class="brand"><img src="/file_000000006b74820eafc49a2edaa6a2a8.png" alt="Logo Brasil Engrenagens"></div></header>
+<header><div class="brand"><img src="/file_000000006b74820eafc49a2edaa6a2a8.png" alt="Logo Brasil Engrenagens"><span class="greeting">Olá Brasil Engrenagens</span></div></header>
 <section class="hero-banner" aria-label="Banner principal"><img src="/banner-principal-mobile.png" alt="Banner principal"></section>
 <section class="bateu-ganhou-banner" aria-label="Campanha Bateu, Ganhou"><img src="/bateu-ganhou-mobile%20(1).png" alt="Campanha Bateu, Ganhou" loading="lazy"></section>
 <main id="cotacao"><div class="section-head"><span class="tag">FORMULÁRIO DE SOLICITAÇÃO</span><h2>Dados para cotação</h2><p>Informe apenas o destino, o valor da nota fiscal e o peso total da carga.</p></div>
