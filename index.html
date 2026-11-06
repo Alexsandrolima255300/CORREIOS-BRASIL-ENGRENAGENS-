@@ -29,11 +29,12 @@ footer{border-top:1px solid #26344a;padding:25px 6%;color:#8d98a9;font-size:.82r
 @media(max-width:800px){.layout{grid-template-columns:1fr}.hero{padding-top:55px}nav{gap:12px}nav a{font-size:.78rem}}
 @media(max-width:520px){.brand img{max-width:220px;max-height:58px}header{align-items:flex-start;flex-direction:column}nav{width:100%;justify-content:space-between}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:19px}main{padding:42px 5%}}
 .ecommerce-banner{padding:10px 5% 55px;display:flex;justify-content:center;align-items:center;background:var(--black)}.ecommerce-banner img{display:block;width:100%;max-width:560px;height:auto;object-fit:contain;border-radius:10px}
+.hero-banner{width:100%;margin:0;padding:0;background:var(--black);overflow:hidden}.hero-banner img{display:block;width:100%;height:auto;object-fit:contain}
 </style>
 </head>
 <body>
 <header><div class="brand"><img src="/file_000000006b74820eafc49a2edaa6a2a8.png" alt="Logo Brasil Engrenagens"></div><nav><a href="#cotacao">Solicitar cotação</a></nav></header>
-<section class="hero"><div class="eyebrow">Soluções em transporte</div><h1>Seu frete, com mais <em>clareza.</em></h1><p>Envie os dados da sua carga e solicite uma cotação à equipe da Brasil Engrenagens. Um processo simples, direto e transparente.</p><div class="actions"><a class="btn primary" href="#cotacao">Solicitar cotação</a></div></section>
+<section class="hero-banner" aria-label="Banner principal"><img src="/banner-principal-mobile.png" alt="Banner principal"></section>
 <main id="cotacao"><div class="section-head"><span class="tag">FORMULÁRIO DE SOLICITAÇÃO</span><h2>Dados para cotação</h2><p>Informe apenas o destino, o valor da nota fiscal e o peso total da carga.</p></div>
 <div class="layout"><section class="panel"><form id="quoteForm"><div class="form-grid">
 <div class="field full"><label>Origem do transporte</label><div class="origin-fixed"><strong>Centro de Distribuição Brasil Engrenagens</strong><span>Endereço de origem já definido pela empresa — não precisa preencher.</span></div></div>
