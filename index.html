@@ -159,57 +159,48 @@ const belaMessages=document.getElementById('belaMessages');
 const belaInput=document.getElementById('belaInput');
 let belaPosition=null;
 let belaDrag=null;
-let belaWasDragged=false;
-let belaSuppressClick=false;
+let belaIgnoreClickUntil=0;
 function clampBela(value,min,max){return Math.min(Math.max(value,min),Math.max(min,max));}
 function placeBela(x,y){
-  const size=belaLauncher.offsetWidth;
+  const size=belaLauncher.offsetWidth||82;
   x=clampBela(x,8,window.innerWidth-size-8);
   y=clampBela(y,8,window.innerHeight-size-8);
   belaPosition={x,y};
-  belaLauncher.style.left=x+'px';belaLauncher.style.top=y+'px';
-  belaLauncher.style.right='auto';belaLauncher.style.bottom='auto';
-  document.getElementById('belaDismiss').style.left=(x+size-14)+'px';
-  document.getElementById('belaDismiss').style.top=(y-10)+'px';
-  document.getElementById('belaDismiss').style.right='auto';
-  document.getElementById('belaDismiss').style.bottom='auto';
-  belaLabel.style.left=Math.max(8,x-150)+'px';
-  belaLabel.style.top=(y+size/2-17)+'px';
-  belaLabel.style.right='auto';belaLabel.style.bottom='auto';
-  const panelWidth=belaPanel.offsetWidth||370;
-  const panelHeight=belaPanel.offsetHeight||520;
+  belaLauncher.style.cssText += '';
+  Object.assign(belaLauncher.style,{left:x+'px',top:y+'px',right:'auto',bottom:'auto'});
+  const dismiss=document.getElementById('belaDismiss');
+  Object.assign(dismiss.style,{left:(x+size-14)+'px',top:(y-10)+'px',right:'auto',bottom:'auto'});
+  Object.assign(belaLabel.style,{left:Math.max(8,x-150)+'px',top:(y+size/2-17)+'px',right:'auto',bottom:'auto'});
+  const panelWidth=Math.min(370,window.innerWidth-20);
+  const panelHeight=Math.min(520,window.innerHeight-120);
   const panelLeft=clampBela(x+size-panelWidth,8,window.innerWidth-panelWidth-8);
   let panelTop=y-panelHeight-12;
   if(panelTop<8)panelTop=y+size+12;
   panelTop=clampBela(panelTop,8,window.innerHeight-panelHeight-8);
-  belaPanel.style.left=panelLeft+'px';belaPanel.style.top=panelTop+'px';
-  belaPanel.style.right='auto';belaPanel.style.bottom='auto';
+  Object.assign(belaPanel.style,{left:panelLeft+'px',top:panelTop+'px',right:'auto',bottom:'auto'});
 }
 belaLauncher.addEventListener('pointerdown',e=>{
-  if(e.button!==undefined&&e.button!==0)return;
+  if(e.pointerType==='mouse'&&e.button!==0)return;
   const rect=belaLauncher.getBoundingClientRect();
-  belaDrag={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,left:rect.left,top:rect.top,moved:false};
-  belaWasDragged=false;
-  belaLauncher.setPointerCapture(e.pointerId);
+  belaDrag={id:e.pointerId,x:e.clientX,y:e.clientY,left:rect.left,top:rect.top,moved:false};
 });
-belaLauncher.addEventListener('pointermove',e=>{
-  if(!belaDrag||e.pointerId!==belaDrag.pointerId)return;
-  const dx=e.clientX-belaDrag.startX,dy=e.clientY-belaDrag.startY;
-  if(!belaDrag.moved&&Math.hypot(dx,dy)<5)return;
-  belaDrag.moved=true;belaWasDragged=true;
+window.addEventListener('pointermove',e=>{
+  if(!belaDrag||e.pointerId!==belaDrag.id)return;
+  const dx=e.clientX-belaDrag.x,dy=e.clientY-belaDrag.y;
+  if(!belaDrag.moved&&Math.hypot(dx,dy)<4)return;
+  belaDrag.moved=true;
   belaLauncher.classList.add('dragging');
   placeBela(belaDrag.left+dx,belaDrag.top+dy);
-  e.preventDefault();
-});
+  if(e.cancelable)e.preventDefault();
+},{passive:false});
 function finishBelaDrag(e){
-  if(!belaDrag||e.pointerId!==belaDrag.pointerId)return;
-  const moved=belaDrag.moved;
+  if(!belaDrag||e.pointerId!==belaDrag.id)return;
+  if(belaDrag.moved)belaIgnoreClickUntil=Date.now()+450;
   belaDrag=null;
   belaLauncher.classList.remove('dragging');
-  if(moved){belaSuppressClick=true;requestAnimationFrame(()=>{belaSuppressClick=false;});}
 }
-belaLauncher.addEventListener('pointerup',finishBelaDrag);
-belaLauncher.addEventListener('pointercancel',finishBelaDrag);
+window.addEventListener('pointerup',finishBelaDrag);
+window.addEventListener('pointercancel',finishBelaDrag);
 function toggleBela(open){
   belaPanel.classList.toggle('open',open);
   belaLauncher.setAttribute('aria-expanded',String(open));
@@ -217,7 +208,7 @@ function toggleBela(open){
   if(open){if(belaPosition)placeBela(belaPosition.x,belaPosition.y);belaInput.focus();}
 }
 belaLauncher.addEventListener('click',()=>{
-  if(belaSuppressClick||belaWasDragged){belaWasDragged=false;return;}
+  if(Date.now()<belaIgnoreClickUntil)return;
   toggleBela(!belaPanel.classList.contains('open'));
 });
 window.addEventListener('resize',()=>{if(belaPosition)placeBela(belaPosition.x,belaPosition.y);});
