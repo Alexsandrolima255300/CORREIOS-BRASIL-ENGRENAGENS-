@@ -34,6 +34,9 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 /* Assistente virtual BELA */
 .bela-launcher{position:fixed;right:22px;bottom:22px;z-index:1000;width:82px;height:82px;padding:0;border:3px solid var(--yellow);border-radius:50%;background:#fff;box-shadow:0 8px 28px #0009;cursor:pointer;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .bela-launcher:hover{transform:scale(1.06);box-shadow:0 10px 32px #000b}
+.bela-dismiss{position:fixed;right:10px;bottom:92px;z-index:1002;width:27px;height:27px;padding:0;border:2px solid #fff;border-radius:50%;background:#17243a;color:#fff;font-size:19px;font-weight:800;line-height:21px;cursor:pointer;box-shadow:0 3px 10px #0009;display:grid;place-items:center}
+.bela-dismiss:hover{background:#b42318}
+.bela-dismiss:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .bela-launcher img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
 .bela-launcher:focus-visible,.bela-send:focus-visible,.bela-close:focus-visible{outline:3px solid #fff;outline-offset:3px}
 .bela-label{position:fixed;right:112px;bottom:45px;z-index:999;background:var(--yellow);color:#080a0f;padding:7px 12px;border-radius:18px;font-size:.8rem;font-weight:900;box-shadow:0 4px 15px #0006;pointer-events:none}
@@ -53,7 +56,7 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 .bela-input{min-width:0;flex:1;padding:11px 12px;border-radius:22px;border:1px solid #3a4c65;background:#080d15;color:#fff;font:inherit;font-size:.87rem}
 .bela-send{border:0;border-radius:50%;width:42px;height:42px;background:var(--yellow);color:#080a0f;font-size:1.1rem;font-weight:900;cursor:pointer}
 .bela-disclaimer{padding:0 14px 10px;color:#9eabbc;font-size:.67rem;text-align:center}
-@media(max-width:520px){.bela-launcher{width:72px;height:72px;right:15px;bottom:15px}.bela-label{right:96px;bottom:37px}.bela-panel{right:10px;bottom:98px;width:calc(100vw - 20px);height:min(500px,calc(100dvh - 120px))}}
+@media(max-width:520px){.bela-launcher{width:72px;height:72px;right:15px;bottom:15px}.bela-dismiss{right:8px;bottom:79px;width:25px;height:25px;font-size:17px;line-height:19px}.bela-label{right:96px;bottom:37px}.bela-panel{right:10px;bottom:98px;width:calc(100vw - 20px);height:min(500px,calc(100dvh - 120px))}}
 
 </style>
 </head>
@@ -75,6 +78,7 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 <footer><img src="/image.png" alt="Identidade visual da Brasil Engrenagens"><span>Desenvolvido por Alexsandro Paulo de Lima Assis</span></footer>
 
 <button class="bela-launcher" id="belaLauncher" type="button" aria-label="Abrir conversa com BELA" aria-expanded="false" aria-controls="belaPanel"><img src="/file_00000000d930820e8b1fbb72c66cfeb6.png" alt=""></button>
+<button class="bela-dismiss" id="belaDismiss" type="button" aria-label="Fechar assistente BELA" title="Fechar assistente">×</button>
 <span class="bela-label" id="belaLabel">Fale com a BELA</span>
 <section class="bela-panel" id="belaPanel" role="dialog" aria-label="Assistente virtual BELA" aria-modal="false">
   <div class="bela-head"><img class="bela-avatar" src="/file_00000000d930820e8b1fbb72c66cfeb6.png" alt=""><div><strong>BELA</strong><span class="bela-status">Assistente virtual • Brasil Engrenagens</span></div><button class="bela-close" id="belaClose" type="button" aria-label="Fechar conversa">×</button></div>
@@ -94,6 +98,7 @@ const belaMessages=document.getElementById('belaMessages');
 const belaInput=document.getElementById('belaInput');
 function toggleBela(open){belaPanel.classList.toggle('open',open);belaLauncher.setAttribute('aria-expanded',String(open));belaLabel.style.display=open?'none':'block';if(open)belaInput.focus();}
 belaLauncher.addEventListener('click',()=>toggleBela(!belaPanel.classList.contains('open')));
+document.getElementById('belaDismiss').addEventListener('click',()=>{toggleBela(false);belaLauncher.style.display='none';belaLabel.style.display='none';document.getElementById('belaDismiss').style.display='none';});
 document.getElementById('belaClose').addEventListener('click',()=>toggleBela(false));
 function belaReply(question){
  const q=question.toLocaleLowerCase('pt-BR');
