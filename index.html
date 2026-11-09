@@ -96,7 +96,7 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 <div class="field"><label for="destino">CEP de destino</label><input id="destino" name="destino" inputmode="numeric" placeholder="00000-000" required></div>
 <div class="field"><label for="cidadeDestino">Cidade de destino</label><input id="cidadeDestino" name="cidadeDestino" type="text" placeholder="A cidade aparecerá após informar o CEP" readonly aria-live="polite"></div>
 <div class="field"><label for="valor">Valor da nota fiscal (R$)</label><input id="valor" name="valor" inputmode="decimal" placeholder="0,00" required></div>
-<div class="field"><label for="peso">Peso total (kg)</label><input id="peso" name="peso" type="number" min="0" max="15" step="0.01" placeholder="Ex.: 10" title="Informe um peso entre 0 e 15 kg" required><small class="field-hint">Obs.: O peso permitido para cotação é de 0,01 a 15 kg.</small></div>
+<div class="field"><label for="peso">Peso total (kg)</label><input id="peso" name="peso" type="number" min="0" max="30" step="0.01" placeholder="Ex.: 10" title="Informe um peso entre 0 e 30 kg" required><small class="field-hint">Obs.: O peso permitido para cotação é de 0,01 a 30 kg.</small></div>
 </div><button class="submit" type="submit">Calcular frete estimado</button><p class="notice">Tarifa estimada pela tabela SEDEX Platinum com origem em Uberaba-MG. O valor da nota fiscal é solicitado para identificação, mas não altera esta tarifa da planilha.</p><p class="table-status" id="tableStatus" role="status">Carregando tabela de tarifas...</p><section class="quote-result" id="quoteResult" aria-live="polite"></section></form></section>
 </div></main>
 <section class="ecommerce-banner" aria-label="Soluções para e-commerce">
@@ -230,7 +230,7 @@ quoteForm.addEventListener('submit',async event=>{
  const invoice=moneyNumber(document.getElementById('valor').value);
  if(cep.length!==8){showQuoteError('Informe um CEP de destino válido com 8 dígitos.');cepDestino.focus();return;}
  if(!Number.isFinite(invoice)||invoice<=0){showQuoteError('Informe um valor de nota fiscal válido.');document.getElementById('valor').focus();return;}
- if(!Number.isFinite(weight)||weight<=0||weight>15){showQuoteError('O peso deve ser maior que zero e não pode ultrapassar 15 kg.');document.getElementById('peso').focus();return;}
+ if(!Number.isFinite(weight)||weight<=0||weight>30){showQuoteError('O peso deve ser maior que zero e não pode ultrapassar 30 kg.');document.getElementById('peso').focus();return;}
  if(!cidadeDestino.value||cidadeDestino.value.includes('Consultando')||cidadeDestino.value.includes('Não foi possível')){
   await consultarCidadePorCep();
  }
