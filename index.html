@@ -238,10 +238,10 @@ async function loadDeadlineTable(){
   const parsed=[];
   const toNumber=value=>{
    if(typeof value==='number'&&Number.isFinite(value))return Math.trunc(value);
-   const digits=String(value??'').replace(/\\D/g,'');
+   const digits=String(value??'').replace(/\D/g,'');
    return digits?Number(digits):NaN;
   };
-  const normalize=value=>String(value??'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const normalize=value=>String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
   for(const sheetName of workbook.SheetNames){
    const rows=XLSX.utils.sheet_to_json(workbook.Sheets[sheetName],{header:1,raw:true,defval:''});
    for(const cells of rows){
