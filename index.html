@@ -269,9 +269,11 @@ async function loadDeadlineTable(){
  }
 }
 const deadlineReady=loadDeadlineTable();
-function findDeadlineByCep(cep){
+function findDeadlineByCep(cep,uf=''){
  const number=cepNumber(cep);
- return deadlineRows.find(item=>number>=item.cepStart&&number<=item.cepEnd)||null;
+ const matches=deadlineRows.filter(item=>number>=item.cepStart&&number<=item.cepEnd);
+ if(uf)return matches.find(item=>item.uf===uf)||null;
+ return matches.length===1?matches[0]:null;
 }
 function parseSemicolonCSVLine(line){
  const fields=[];let value='',quoted=false;
@@ -341,7 +343,8 @@ quoteForm.addEventListener('submit',async event=>{
   await consultarCidadePorCep();
  }
  const row=findTariffByCep(cep);
- const deadline=findDeadlineByCep(cep);
+ const destinationUf=(cidadeDestino.value.match(/-\\s*([A-Z]{2})$/)||[])[1]||'';
+ const deadline=findDeadlineByCep(cep,destinationUf);
  if(!row){showQuoteError('Este CEP não está contemplado na tabela SEDEX Platinum. Não aplicamos tarifa aproximada.');return;}
  const grams=weight*1000;
  let base=0,extra=0,bandLabel='';
