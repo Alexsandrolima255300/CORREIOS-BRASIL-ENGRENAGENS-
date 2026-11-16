@@ -226,6 +226,24 @@ const csvPath='./ORIGEM%20UBERABA-MG%20-%20PLATINUM%20-%20SEDEX%20(1).csv';
 const weightBands=['0 a 300','301 a 500','501 a 1.000','1.001 a 2.000','2.001 a 3.000','3.001 a 4.000','4.001 a 5.000','5.001 a 6.000','6.001 a 7.000','7.001 a 8.000','8.001 a 9.000','9.001 a 10.000'];
 let tariffRows=[];
 let tariffLoadError='';
+let deadlineRows=[];
+let deadlineLoadError='';
+async function loadDeadlineTable(){
+ try{
+  const response=await fetch('./prazos-sedex-uberaba.json',{cache:'no-store'});
+  if(!response.ok)throw new Error('Não foi possível carregar a tabela de prazos.');
+  const data=await response.json();
+  deadlineRows=data.map(item=>({cepStart:Number(item[0]),cepEnd:Number(item[1]),prazo:String(item[2]||'').trim(),city:item[3],uf:item[4]}))
+   .filter(item=>item.cepStart&&item.cepEnd&&item.prazo&&item.cepEnd>=item.cepStart);
+ }catch(error){
+  deadlineLoadError=error.message||'Erro ao carregar os prazos.';
+ }
+}
+const deadlineReady=loadDeadlineTable();
+function findDeadlineByCep(cep){
+ const number=cepNumber(cep);
+ return deadlineRows.find(item=>number>=item.cepStart&&number<=item.cepEnd)||null;
+}
 function parseSemicolonCSVLine(line){
  const fields=[];let value='',quoted=false;
  for(let i=0;i<line.length;i++){
@@ -282,6 +300,7 @@ quoteForm.addEventListener('submit',async event=>{
  quoteResult.className='quote-result';
  quoteResult.textContent='';
  await tariffReady;
+ await deadlineReady;
  if(tariffLoadError){showQuoteError('A tabela de tarifas não está disponível. '+tariffLoadError);return;}
  const cep=cepDestino.value.replace(/\D/g,'');
  const weight=Number(document.getElementById('peso').value);
@@ -293,6 +312,7 @@ quoteForm.addEventListener('submit',async event=>{
   await consultarCidadePorCep();
  }
  const row=findTariffByCep(cep);
+ const deadline=findDeadlineByCep(cep);
  if(!row){showQuoteError('Este CEP não está contemplado na tabela SEDEX Platinum. Não aplicamos tarifa aproximada.');return;}
  const grams=weight*1000;
  let base=0,extra=0,bandLabel='';
@@ -314,20 +334,22 @@ quoteForm.addEventListener('submit',async event=>{
  const percentageFee=Math.round(subtotal*0.10*100)/100;
  const total=Math.round((subtotal+percentageFee)*100)/100;
  quoteResult.className='quote-result show';
- quoteResult.innerHTML='<h3>Frete estimado</h3><div class="quote-price"></div><div class="quote-detail"><span>Destino</span><strong class="destination"></strong></div><div class="quote-detail"><span>Faixa tarifária</span><strong class="level"></strong></div><div class="quote-detail"><span>Peso informado</span><strong class="weight"></strong></div><div class="quote-detail"><span>Faixa aplicada</span><strong class="band"></strong></div><div class="quote-detail"><span>Tarifa-base</span><strong class="base"></strong></div><div class="quote-detail extra-row"><span>Adicional de peso</span><strong class="extra"></strong></div><div class="quote-detail"><span>Taxa fixa</span><strong class="fixed-fee"></strong></div><div class="quote-detail"><span>Taxa adicional (10%)</span><strong class="percentage-fee"></strong></div><p class="quote-warning"></p>';
+ quoteResult.innerHTML='<h3>Frete estimado</h3><div class="quote-price"></div><div class="quote-detail"><span>Destino</span><strong class="destination"></strong></div><div class="quote-detail"><span>Prazo de entrega</span><strong class="delivery-deadline"></strong></div><div class="quote-detail"><span>Faixa tarifária</span><strong class="level"></strong></div><div class="quote-detail"><span>Peso informado</span><strong class="weight"></strong></div><div class="quote-detail"><span>Faixa aplicada</span><strong class="band"></strong></div><div class="quote-detail"><span>Tarifa-base</span><strong class="base"></strong></div><div class="quote-detail extra-row"><span>Adicional de peso</span><strong class="extra"></strong></div><div class="quote-detail"><span>Taxa fixa</span><strong class="fixed-fee"></strong></div><div class="quote-detail"><span>Taxa adicional (10%)</span><strong class="percentage-fee"></strong></div><p class="quote-warning"></p>';
  quoteResult.querySelector('.quote-price').textContent=formatBRL(total);
  quoteResult.querySelector('.fixed-fee').textContent=formatBRL(fixedFee);
  quoteResult.querySelector('.percentage-fee').textContent=formatBRL(percentageFee);
  quoteResult.querySelector('.destination').textContent=(cidadeDestino.value&&!cidadeDestino.value.includes('CEP não'))?cidadeDestino.value:(row.city+' - '+row.uf);
+ quoteResult.querySelector('.delivery-deadline').textContent=deadline?deadline.prazo:'Não informado na planilha';
  quoteResult.querySelector('.level').textContent=row.level+' • SEDEX Platinum';
  quoteResult.querySelector('.weight').textContent=weight.toLocaleString('pt-BR')+' kg';
  quoteResult.querySelector('.band').textContent=bandLabel;
  quoteResult.querySelector('.base').textContent=formatBRL(base);
  quoteResult.querySelector('.extra').textContent=formatBRL(extra);
  quoteResult.querySelector('.extra-row').style.display=extra>0?'flex':'none';
- quoteResult.querySelector('.quote-warning').textContent=weight>10
-  ?'Para pesos acima de 10 kg, o adicional foi calculado proporcionalmente por kg (fração de kg não arredondada). Confirme essa regra comercial antes de utilizar o valor como proposta final. O cálculo considera somente as tarifas desta planilha.'
-  :'Estimativa baseada somente na tarifa da planilha. Não inclui serviços adicionais, seguro, impostos ou outros componentes que não estejam informados neste arquivo.';
+ quoteResult.querySelector('.quote-warning').textContent=(weight>10
+  ?'Para pesos acima de 10 kg, o adicional foi calculado proporcionalmente por kg (fração de kg não arredondada). Confirme essa regra comercial antes de utilizar o valor como proposta final. O cálculo considera somente as tarifas desta planilha. '
+  :'Estimativa baseada somente na tarifa da planilha. Não inclui serviços adicionais, seguro, impostos ou outros componentes que não estejam informados neste arquivo. ')
+  +(deadline?'Prazo exibido conforme a coluna Prazo da planilha de referência.':'A planilha não informa prazo para este CEP; confirme o prazo com os Correios antes de repassá-lo ao cliente.');
 });
 
 
