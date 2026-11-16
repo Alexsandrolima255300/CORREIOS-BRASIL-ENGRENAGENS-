@@ -343,7 +343,8 @@ quoteForm.addEventListener('submit',async event=>{
   await consultarCidadePorCep();
  }
  const row=findTariffByCep(cep);
- const destinationUf=(cidadeDestino.value.match(/-\\s*([A-Z]{2})$/)||[])[1]||'';
+ const ufPart=cidadeDestino.value.split(' - ').pop().trim();
+ const destinationUf=/^[A-Z]{2}$/.test(ufPart)?ufPart:'';
  const deadline=findDeadlineByCep(cep,destinationUf);
  if(!row){showQuoteError('Este CEP não está contemplado na tabela SEDEX Platinum. Não aplicamos tarifa aproximada.');return;}
  const grams=weight*1000;
