@@ -41,7 +41,7 @@ input,select,textarea{width:100%;padding:13px 14px;border-radius:7px;border:1px 
 .quote-result.show{display:block}.quote-result h3{margin:0 0 8px;color:var(--yellow);font-size:1.15rem}
 .quote-price{font-size:clamp(1.8rem,5vw,2.5rem);font-weight:900;color:#fff;margin:5px 0}
 .quote-detail{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #26364d;font-size:.88rem}
-.quote-detail:last-of-type{border-bottom:0}.quote-warning{margin:12px 0 0;color:#f5c400;font-size:.78rem;line-height:1.45}
+.quote-detail:last-of-type{border-bottom:0}.deadline-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}.deadline-card{display:flex;flex-direction:column;gap:5px;padding:12px;border:1px solid #344a68;border-radius:9px;background:#101f33}.deadline-card span{font-size:.75rem;color:#aab2c0;font-weight:800}.deadline-card strong{font-size:1rem;color:var(--yellow)}@media(max-width:520px){.deadline-grid{grid-template-columns:1fr}}.quote-warning{margin:12px 0 0;color:#f5c400;font-size:.78rem;line-height:1.45}
 .quote-error{color:#ffb4ab}.table-status{font-size:.78rem;color:#aab2c0;margin:8px 0 0}
 .side h3{font-size:1.25rem;margin-top:0}.step{display:flex;gap:14px;margin:22px 0}.num{width:34px;height:34px;flex:none;border-radius:9px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900}.step p{margin:3px 0;color:#b8c1d0;font-size:.9rem}.step strong{color:#fff}
 .tag{display:inline-block;background:#152a49;color:#a9c8f5;padding:6px 10px;border-radius:5px;font-size:.72rem;font-weight:800}
@@ -188,6 +188,7 @@ Como posso ajudar você hoje?</div></div>
  window.setTimeout(hideLoader,8000);
 })();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 // O formulário agora calcula a tarifa localmente usando a tabela CSV do repositório.
 
@@ -230,13 +231,41 @@ let deadlineRows=[];
 let deadlineLoadError='';
 async function loadDeadlineTable(){
  try{
-  const response=await fetch('./prazos-sedex-uberaba.json',{cache:'no-store'});
-  if(!response.ok)throw new Error('Não foi possível carregar a tabela de prazos.');
-  const data=await response.json();
-  deadlineRows=data.map(item=>({cepStart:Number(item[0]),cepEnd:Number(item[1]),prazo:String(item[2]||'').trim(),city:item[3],uf:item[4]}))
-   .filter(item=>item.cepStart&&item.cepEnd&&item.prazo&&item.cepEnd>=item.cepStart);
+  if(!window.XLSX)throw new Error('Biblioteca de leitura da planilha indisponível.');
+  const response=await fetch('./20261105_1022_MG%20Uberaba%20apenas%20prazo.xlsx',{cache:'no-store'});
+  if(!response.ok)throw new Error('Não foi possível carregar a planilha de prazos.');
+  const workbook=XLSX.read(await response.arrayBuffer(),{type:'array',cellDates:false});
+  const parsed=[];
+  const toNumber=value=>{
+   if(typeof value==='number'&&Number.isFinite(value))return Math.trunc(value);
+   const digits=String(value??'').replace(/\\D/g,'');
+   return digits?Number(digits):NaN;
+  };
+  const normalize=value=>String(value??'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+  for(const sheetName of workbook.SheetNames){
+   const rows=XLSX.utils.sheet_to_json(workbook.Sheets[sheetName],{header:1,raw:true,defval:''});
+   for(const cells of rows){
+    // Estrutura da planilha: CEP origem inicial/final, CEP destino inicial/final, UF, cidade, SEDEX, PAC e Mini Envios.
+    const originStart=toNumber(cells[0]),originEnd=toNumber(cells[1]);
+    const cepStart=toNumber(cells[2]),cepEnd=toNumber(cells[3]);
+    const uf=String(cells[4]??'').trim().toUpperCase();
+    const city=String(cells[5]??'').trim();
+    const sedex=toNumber(cells[6]),pac=toNumber(cells[7]),mini=toNumber(cells[8]);
+    if(originStart!==38000001||originEnd!==38107999||!cepStart||!cepEnd||cepEnd<cepStart||
+       !/^[A-Z]{2}$/.test(uf)||!city||![sedex,pac,mini].every(Number.isFinite))continue;
+    parsed.push({cepStart,cepEnd,city,uf,sedex,pac,mini});
+   }
+  }
+  // Remove apenas linhas integralmente duplicadas; lacunas e faixas distintas permanecem intactas.
+  const unique=new Map();
+  parsed.forEach(item=>unique.set([item.cepStart,item.cepEnd,item.uf,item.city,item.sedex,item.pac,item.mini].join('|'),item));
+  deadlineRows=[...unique.values()].sort((a,b)=>a.cepStart-b.cepStart||a.cepEnd-b.cepEnd);
+  if(!deadlineRows.length)throw new Error('Nenhuma linha válida foi encontrada. Confira se a primeira aba contém as 9 colunas da tabela de prazos.');
+  tableStatus.textContent+=' Tabela de prazos carregada: '+deadlineRows.length.toLocaleString('pt-BR')+' faixas (SEDEX, PAC e Mini Envios).';
  }catch(error){
   deadlineLoadError=error.message||'Erro ao carregar os prazos.';
+  tableStatus.textContent+=' Não foi possível carregar a tabela de prazos: '+deadlineLoadError;
+  tableStatus.classList.add('quote-error');
  }
 }
 const deadlineReady=loadDeadlineTable();
@@ -334,12 +363,15 @@ quoteForm.addEventListener('submit',async event=>{
  const percentageFee=Math.round(subtotal*0.10*100)/100;
  const total=Math.round((subtotal+percentageFee)*100)/100;
  quoteResult.className='quote-result show';
- quoteResult.innerHTML='<h3>Frete estimado</h3><div class="quote-price"></div><div class="quote-detail"><span>Destino</span><strong class="destination"></strong></div><div class="quote-detail"><span>Prazo de entrega</span><strong class="delivery-deadline"></strong></div><div class="quote-detail"><span>Faixa tarifária</span><strong class="level"></strong></div><div class="quote-detail"><span>Peso informado</span><strong class="weight"></strong></div><div class="quote-detail"><span>Faixa aplicada</span><strong class="band"></strong></div><div class="quote-detail"><span>Tarifa-base</span><strong class="base"></strong></div><div class="quote-detail extra-row"><span>Adicional de peso</span><strong class="extra"></strong></div><div class="quote-detail"><span>Taxa fixa</span><strong class="fixed-fee"></strong></div><div class="quote-detail"><span>Taxa adicional (10%)</span><strong class="percentage-fee"></strong></div><p class="quote-warning"></p>';
+ quoteResult.innerHTML='<h3>Frete estimado</h3><div class="quote-price"></div><div class="quote-detail"><span>Destino</span><strong class="destination"></strong></div><div class="deadline-grid"><div class="deadline-card"><span>SEDEX</span><strong class="deadline-sedex"></strong></div><div class="deadline-card"><span>PAC</span><strong class="deadline-pac"></strong></div><div class="deadline-card"><span>Mini Envios</span><strong class="deadline-mini"></strong></div></div><div class="quote-detail"><span>Faixa tarifária</span><strong class="level"></strong></div><div class="quote-detail"><span>Peso informado</span><strong class="weight"></strong></div><div class="quote-detail"><span>Faixa aplicada</span><strong class="band"></strong></div><div class="quote-detail"><span>Tarifa-base</span><strong class="base"></strong></div><div class="quote-detail extra-row"><span>Adicional de peso</span><strong class="extra"></strong></div><div class="quote-detail"><span>Taxa fixa</span><strong class="fixed-fee"></strong></div><div class="quote-detail"><span>Taxa adicional (10%)</span><strong class="percentage-fee"></strong></div><p class="quote-warning"></p>';
  quoteResult.querySelector('.quote-price').textContent=formatBRL(total);
  quoteResult.querySelector('.fixed-fee').textContent=formatBRL(fixedFee);
  quoteResult.querySelector('.percentage-fee').textContent=formatBRL(percentageFee);
  quoteResult.querySelector('.destination').textContent=(cidadeDestino.value&&!cidadeDestino.value.includes('CEP não'))?cidadeDestino.value:(row.city+' - '+row.uf);
- quoteResult.querySelector('.delivery-deadline').textContent=deadline?deadline.prazo:'Não informado na planilha';
+ const deadlineLabel=value=>Number.isFinite(value)?value+' dias':'Não informado';
+ quoteResult.querySelector('.deadline-sedex').textContent=deadline?deadlineLabel(deadline.sedex):'Não informado';
+ quoteResult.querySelector('.deadline-pac').textContent=deadline?deadlineLabel(deadline.pac):'Não informado';
+ quoteResult.querySelector('.deadline-mini').textContent=deadline?deadlineLabel(deadline.mini):'Não informado';
  quoteResult.querySelector('.level').textContent=row.level+' • SEDEX Platinum';
  quoteResult.querySelector('.weight').textContent=weight.toLocaleString('pt-BR')+' kg';
  quoteResult.querySelector('.band').textContent=bandLabel;
@@ -349,7 +381,7 @@ quoteForm.addEventListener('submit',async event=>{
  quoteResult.querySelector('.quote-warning').textContent=(weight>10
   ?'Para pesos acima de 10 kg, o adicional foi calculado proporcionalmente por kg (fração de kg não arredondada). Confirme essa regra comercial antes de utilizar o valor como proposta final. O cálculo considera somente as tarifas desta planilha. '
   :'Estimativa baseada somente na tarifa da planilha. Não inclui serviços adicionais, seguro, impostos ou outros componentes que não estejam informados neste arquivo. ')
-  +(deadline?'Prazo exibido conforme a coluna Prazo da planilha de referência.':'A planilha não informa prazo para este CEP; confirme o prazo com os Correios antes de repassá-lo ao cliente.');
+  +(deadline?'Prazos exibidos conforme as colunas SEDEX, PAC e Mini Envios da planilha de referência.':'A planilha não informa prazo para este CEP; confirme os prazos com os Correios antes de repassá-los ao cliente.');
 });
 
 
@@ -421,7 +453,7 @@ function belaReply(question){
  if(q.includes('bela')||q.includes('seu nome')||q.includes('por que')||q.includes('porque')||q.includes('significa seu nome')) return 'Meu nome é BELA porque reúne as iniciais de Brasil Engrenagens, Logística e Atendimento. 💛 Foi escolhido para representar a empresa e o meu papel: ser uma assistente próxima, acolhedora e pronta para ajudar você com informações sobre cotação e atendimento. E BELA também combina com a ideia de tornar sua experiência mais simples e agradável!';
  if(q.includes('cotação')||q.includes('cotacao')||q.includes('frete')) return 'Para solicitar uma cotação, preencha o formulário do site com o CEP de destino, o valor da nota fiscal e o peso total da carga. O cálculo e o envio automático ainda estão em configuração.';
  if(q.includes('dado')||q.includes('inform')) return 'Nesta etapa, precisamos do CEP de destino, valor da nota fiscal e peso total da carga. A origem já está definida como Centro de Distribuição Brasil Engrenagens.';
- if(q.includes('entrega')||q.includes('prazo')||q.includes('rast')) return 'A cotação consulta a tabela de prazos do SEDEX pelo CEP de destino. Quando o CEP está contemplado na planilha, o prazo informado aparece junto ao valor do frete. Se não houver prazo cadastrado para o CEP, o site avisa que é necessário confirmar a informação com os Correios.';
+ if(q.includes('entrega')||q.includes('prazo')||q.includes('rast')) return 'A cotação consulta a tabela de prazos pelo CEP de destino e apresenta os prazos de SEDEX, PAC e Mini Envios quando a faixa estiver cadastrada. Se o CEP não constar na planilha, o site informa que é necessário confirmar os prazos com os Correios.';
  if(q.includes('black friday')||q.includes('blackfriday')||q.includes('desconto')||q.includes('platinum')||q.includes('diamante')||q.includes('postagem')||q.includes('postagens')) return 'A campanha Black Friday dos Correios funciona com uma vantagem para o mês seguinte: quanto maior for o volume de postagens realizado durante a campanha, maiores poderão ser os descontos aplicados no próximo mês, conforme as regras e condições da promoção.\n\nClientes com contrato: contas nas categorias Platinum e Diamante podem ter descontos de 15% a 35% nas postagens.\n\nO percentual efetivo e as condições especiais dependem do volume de postagens e do enquadramento da conta nas regras da campanha. A BELA não consulta o contrato nem calcula o desconto individual; para confirmar o benefício aplicável, consulte o representante ou canal comercial dos Correios.';
  if(q.includes('olá')||q.includes('ola')||q.includes('bom dia')||q.includes('boa tarde')||q.includes('boa noite')) return 'Olá! 💛 Que bom falar com você. Posso orientar sobre cotação, dados necessários e informações de entrega.';
  return 'Não tenho essa informação com segurança e prefiro não inventar uma resposta. Para receber ajuda, entre em contato com o Alex pelo telefone/WhatsApp: (34) 99140-1087. 💛';
