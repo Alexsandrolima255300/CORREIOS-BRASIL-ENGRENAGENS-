@@ -117,6 +117,20 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 @media(max-width:520px){#accessGate{padding:18px}.access-card{border-radius:22px;padding:28px 22px}.access-logo{margin-bottom:20px}.access-card>p{margin-bottom:23px}.access-btn{min-height:50px}}
 @media(prefers-reduced-motion:reduce){#accessGate:before,#accessGate:after,.access-card,.access-logo,.access-card:before,#loginSubmit:disabled:after{animation:none!important} .access-btn{transition:none}}
 
+
+/* Animação de processamento da cotação — duas engrenagens */
+#quoteProcessing{position:fixed;inset:0;z-index:300000;display:none;place-items:center;padding:20px;background:rgba(4,8,15,.88);backdrop-filter:blur(7px)}
+#quoteProcessing.active{display:grid}
+.quote-processing-card{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:28px 34px;border:1px solid rgba(245,196,0,.42);border-radius:18px;background:linear-gradient(145deg,#142238,#090f19);box-shadow:0 22px 70px #000b}
+.quote-gears{display:flex;align-items:center;justify-content:center;gap:0;height:88px;color:var(--yellow)}
+.quote-gear{display:block;font-family:Arial,sans-serif;font-size:76px;line-height:1;text-shadow:0 5px 20px rgba(245,196,0,.2);font-variant-emoji:text}
+.quote-gear:first-child{animation:quoteGearClockwise 1s linear 1 both}
+.quote-gear:last-child{margin-left:-13px;color:#e9eef7;animation:quoteGearCounter 1s linear 1 both}
+.quote-processing-card p{margin:0;color:#f7f8fb;font-weight:850;letter-spacing:.02em}
+@keyframes quoteGearClockwise{to{transform:rotate(360deg)}}
+@keyframes quoteGearCounter{to{transform:rotate(-360deg)}}
+@media(prefers-reduced-motion:reduce){.quote-gear{animation:none!important}}
+
 /* Aviso obrigatório antes de cada cotação */
 #shippingNotice{position:fixed;inset:0;z-index:250000;display:none;place-items:center;padding:18px;background:rgba(0,0,0,.82);backdrop-filter:blur(7px)}
 #shippingNotice.open{display:grid}
@@ -154,6 +168,7 @@ footer{background:var(--yellow);border-top:0;padding:18px 6%;color:#080a0f;font-
 <div class="field"><label for="peso">Peso total (kg)</label><input id="peso" name="peso" type="number" min="0" max="30" step="0.01" placeholder="Ex.: 10" title="Informe um peso entre 0 e 30 kg" required><small class="field-hint">Obs.: O peso permitido para cotação é de 0,01 a 30 kg.</small></div>
 </div><div class="field full seller-field"><label for="sellerName">Vendedor responsável pela cotação</label><select id="sellerName" name="sellerName" required><option value="">Selecione seu nome</option><option value="Luara Pires">Luara Pires</option><option value="Julio Balieiro">Julio Balieiro</option><option value="Ana Carolina">Ana Carolina</option><option value="Adriana Diaz">Adriana Diaz</option><option value="Marco Soares">Marco Soares</option><option value="Helen Alvares">Helen Alvares</option><option value="Gisele da Silva">Gisele da Silva</option><option value="Otavio Augusto">Otavio Augusto</option><option value="Taciana Santana">Taciana Santana</option><option value="Ana Paula">Ana Paula</option><option value="Ryan Willian">Ryan Willian</option><option value="Giovanni Canesin">Giovanni Canesin</option><option value="Maria Inês">Maria Inês</option><option value="Julio Cesar">Julio Cesar</option><option value="Daniel Ferracioli">Daniel Ferracioli</option><option value="Fabio Schimitd">Fabio Schimitd</option><option value="Alexsandro Paulo">Alexsandro Paulo (Administrador)</option><option value="Gleiber Santos">Gleiber Santos</option></select><small class="field-hint">Selecione seu nome antes de calcular o frete.</small></div><button class="submit" type="submit">Calcular frete estimado</button><p class="notice">Tarifa estimada pela tabela SEDEX Platinum com origem em Uberaba-MG. O valor da nota fiscal é solicitado para identificação, mas não altera esta tarifa da planilha.</p><p class="table-status" id="tableStatus" role="status">Carregando tabela de tarifas...</p><section class="quote-result" id="quoteResult" aria-live="polite"></section></form></section>
 </div></main>
+<div id="quoteProcessing" role="status" aria-live="polite" aria-label="Preparando cotação"><div class="quote-processing-card"><div class="quote-gears" aria-hidden="true"><span class="quote-gear">&#9881;&#65038;</span><span class="quote-gear">&#9881;&#65038;</span></div><p>Preparando sua cotação...</p></div></div>
 <div id="shippingNotice" role="dialog" aria-modal="true" aria-labelledby="shippingNoticeTitle" aria-describedby="shippingNoticeDescription">
  <div class="shipping-notice-card">
   <h2 class="shipping-notice-title" id="shippingNoticeTitle"><span aria-hidden="true">!</span> AVISO IMPORTANTE</h2>
@@ -364,6 +379,15 @@ function findTariffByCep(cep){
 }
 quoteForm.addEventListener('submit',async event=>{
  event.preventDefault();
+ const quoteProcessing=document.getElementById('quoteProcessing');
+ const quoteSubmitButton=quoteForm.querySelector('.submit');
+ quoteSubmitButton.disabled=true;
+ quoteSubmitButton.textContent='Preparando cotação...';
+ quoteProcessing.classList.add('active');
+ await new Promise(resolve=>window.setTimeout(resolve,1000));
+ quoteProcessing.classList.remove('active');
+ quoteSubmitButton.disabled=false;
+ quoteSubmitButton.textContent='Calcular frete estimado';
  quoteResult.className='quote-result';
  quoteResult.textContent='';
  await tariffReady;
