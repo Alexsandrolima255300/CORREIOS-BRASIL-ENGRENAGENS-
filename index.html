@@ -435,7 +435,7 @@ quoteForm.addEventListener('submit',async event=>{
  quoteResult.querySelector('.quote-price').textContent=formatBRL(total);
   quoteResult.querySelector('.quote-real-price').textContent=formatBRL(totalCalculado);
  quoteResult.querySelector('.fixed-fee').textContent=formatBRL(fixedFee);
- quoteResult.querySelector('.percentage-fee').textContent=formatBRL(percentageFee);
+
  quoteResult.querySelector('.seller-name').textContent=document.getElementById('sellerName').value;
  quoteResult.querySelector('.destination').textContent=(cidadeDestino.value&&!cidadeDestino.value.includes('CEP não'))?cidadeDestino.value:(row.city+' - '+row.uf);
  const deadlineLabel=value=>Number.isFinite(value)?value+' dias':'Não informado';
